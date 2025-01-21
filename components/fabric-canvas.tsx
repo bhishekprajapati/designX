@@ -10,7 +10,7 @@ export type FabricProps = {
 } & React.HTMLProps<HTMLDivElement>;
 
 const FabricCanvas: React.FC<FabricProps> = (props) => {
-  const { options, className, ...restProps } = props;
+  const { options, ...restProps } = props;
 
   const mode = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);

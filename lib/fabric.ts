@@ -1,4 +1,3 @@
-import colors from "@/constants/colors";
 import { Circle, CircleProps, FabricObject, Rect, RectProps } from "fabric";
 import { nanoid } from "nanoid";
 
@@ -25,7 +24,7 @@ FabricObject.prototype.lock = function () {
   this.isLocked = false;
 };
 
-type ShapeOptions<T extends {}> = Omit<Partial<T>, "id" | "name"> & {
+type ShapeOptions<T> = Omit<Partial<T>, "id" | "name"> & {
   name: string;
 };
 
