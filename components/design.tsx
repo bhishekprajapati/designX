@@ -35,10 +35,8 @@ const Layers = ({ canvas }: LayersProps) => {
 
   useEffect(() => {
     const refresh = () => setLayers(canvas.getObjects());
-
     canvas.on("object:added", refresh);
     canvas.on("object:removed", refresh);
-
     return () => {
       canvas.off("object:added", refresh);
       canvas.off("object:removed", refresh);
@@ -53,7 +51,8 @@ const Layers = ({ canvas }: LayersProps) => {
           <li
             key={layer.id}
             className={cn("ps-4 pe-2 rounded-sm flex items-center gap-4", {
-              "bg-slate-900": canvas.getActiveObject() === layer,
+              "bg-gray-100 dark:bg-slate-900":
+                canvas.getActiveObject() === layer,
             })}
           >
             {layer.name}

@@ -23,6 +23,7 @@ const FabricCanvas: React.FC<FabricProps> = (props) => {
 
   useEffect(() => {
     if (!(canvasRef.current && containerRef.current)) return;
+
     const canvas = new Canvas(canvasRef.current, {
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight,
@@ -31,6 +32,7 @@ const FabricCanvas: React.FC<FabricProps> = (props) => {
       selectionLineWidth: 1,
       backgroundColor: mode.resolvedTheme === "light" ? "#ddd" : "#0f172a",
       ...options,
+      hoverCursor: "pointer",
     });
 
     const resizer = new ResizeObserver(() => {

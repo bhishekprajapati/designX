@@ -1,5 +1,6 @@
 "use client";
 
+import colors from "@/constants/colors";
 import useCanvas from "@/hooks/use-canvas";
 import { Shape, shapes } from "@/lib/fabric";
 import {
@@ -39,6 +40,7 @@ const useShapes = () => {
         ...options,
       });
 
+      obj.borderColor = colors.hover;
       canvas.add(obj);
       canvas.setActiveObject(obj);
       canvas.defaultCursor = "default";
