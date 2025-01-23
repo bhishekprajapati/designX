@@ -1,9 +1,46 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useContext, useEffect, useRef } from "react";
+import { Fragment, useContext, useEffect, useRef } from "react";
 import { Canvas, type CanvasOptions } from "fabric";
 import { CanvasContext } from "@/contexts/canvas-provider";
+import { useMutation, useStorage } from "@liveblocks/react/suspense";
+import useCanvas from "@/hooks/use-canvas";
+import { RectangleLayer } from "./layers";
+import { TLiveLayerData } from "@/liveblocks.config";
+
+const Layers = () => {
+  const canvas = useCanvas();
+  const layers = useStorage(({ fabricCanvas }) => fabricCanvas.layers) ?? [];
+
+  const modify = useMutation(({ storage }, layer: TLiveLayerData) => {
+    const target = storage
+      .get("fabricCanvas")
+      .get("layers")
+      .find((liveLayer) => liveLayer.get("id") === layer.id);
+
+    console.log("target layer", target);
+    target?.update(layer);
+  }, []);
+
+  console.log("rendering layers....");
+
+  if (!canvas) return <></>;
+
+  return (
+    <>
+      {layers.map((layer) => (
+        <Fragment key={layer.id}>
+          <RectangleLayer
+            canvas={canvas}
+            layer={layer}
+            onModified={(state) => modify(state)}
+          />
+        </Fragment>
+      ))}
+    </>
+  );
+};
 
 export type FabricProps = {
   options?: Partial<Omit<CanvasOptions, "width" | "height">>;
@@ -13,6 +50,8 @@ const FabricCanvas: React.FC<FabricProps> = (props) => {
   const { options, ...restProps } = props;
 
   const mode = useTheme();
+  const background = useStorage((root) => root.fabricCanvas.background);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctx = useContext(CanvasContext);
@@ -30,7 +69,7 @@ const FabricCanvas: React.FC<FabricProps> = (props) => {
       selectionColor: "rgba(0, 97, 242, 0.1)",
       selectionBorderColor: "#0061F2",
       selectionLineWidth: 1,
-      backgroundColor: mode.resolvedTheme === "light" ? "#ddd" : "#0f172a",
+      backgroundColor: background,
       ...options,
       hoverCursor: "pointer",
     });
@@ -52,10 +91,19 @@ const FabricCanvas: React.FC<FabricProps> = (props) => {
     };
   }, [options, mode]);
 
+  useEffect(() => {
+    const canvas = ctx.getCanvas();
+    if (!canvas) return;
+    canvas.backgroundColor = background;
+    canvas.renderAll();
+    console.log(canvas.toJSON());
+  }, [background]);
+
   return (
     <div {...restProps}>
       <div ref={containerRef} className="relative w-full h-full">
         <canvas ref={canvasRef} />
+        <Layers />
       </div>
     </div>
   );

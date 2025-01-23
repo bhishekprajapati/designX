@@ -1,15 +1,24 @@
 "use client";
 
+import { Canvas } from "fabric";
+import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  useMutation,
+  useOthers,
+  useStorage,
+  useUpdateMyPresence,
+} from "@liveblocks/react/suspense";
+
+import ToolBar from "./toolbar";
+import { Button } from "./ui/button";
+import { Room } from "./room";
+import Cursor from "./cursor";
+import ToolProvider from "@/contexts/tool-provider";
+import useCanvas from "@/hooks/use-canvas";
 import FabricCanvas from "@/components/fabric-canvas";
 import { ModeToggle } from "@/components/mode-toggle";
 import CanvasProvider from "@/contexts/canvas-provider";
-import ToolProvider from "@/contexts/tool-provider";
-import ToolBar from "./toolbar";
-import useCanvas from "@/hooks/use-canvas";
-import { Canvas } from "fabric";
-import { useEffect, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
 type LayersProps = {
@@ -73,11 +82,31 @@ const Layers = ({ canvas }: LayersProps) => {
 
 const LeftBar = () => {
   const canvas = useCanvas();
+  const background = useStorage(({ fabricCanvas }) => fabricCanvas.background);
+  const [color, setColor] = useState(background);
+  const sync = useMutation(
+    ({ storage }) => {
+      console.log("changing to", color);
+      const fabric = storage.get("fabricCanvas");
+      fabric.update({
+        background: color,
+      });
+    },
+    [color]
+  );
+
   if (!canvas) return <></>;
 
   return (
     <div>
-      <Layers canvas={canvas} />
+      <input
+        type="color"
+        onChange={(e) => {
+          setColor(e.target.value);
+          sync();
+        }}
+      />
+      {/* <Layers canvas={canvas} /> */}
     </div>
   );
 };
@@ -90,22 +119,87 @@ const RightBar = () => {
   );
 };
 
+const MyPresence = () => {
+  const canvas = useCanvas();
+  const update = useUpdateMyPresence();
+
+  useEffect(() => {
+    if (!canvas) return;
+    canvas.on("mouse:move", ({ scenePoint }) =>
+      update({
+        cursor: {
+          x: scenePoint.x,
+          y: scenePoint.y,
+        },
+      })
+    );
+  }, [canvas]);
+
+  return <></>;
+};
+
+const OthersPresence = () => {
+  const COLORS = [
+    "#E57373",
+    "#9575CD",
+    "#4FC3F7",
+    "#81C784",
+    "#FFF176",
+    "#FF8A65",
+    "#F06292",
+    "#7986CB",
+  ] as const;
+
+  const others = useOthers();
+
+  const getColor = (index: number) => {
+    if (index < 0) return COLORS[0];
+    if (index < COLORS.length) return COLORS[index];
+    return COLORS[index % COLORS.length];
+  };
+
+  return (
+    <ul className="flex items-center gap-4">
+      {others.map(({ connectionId, presence }) => (
+        <li key={connectionId}>
+          {connectionId}
+          {presence.cursor && (
+            <Cursor
+              x={presence.cursor.x}
+              y={presence.cursor.y}
+              color={getColor(connectionId)}
+            />
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
 const Design = () => {
   return (
-    <CanvasProvider>
-      <ToolProvider>
-        <div className="w-full h-dvh">
-          <div className="grid  h-full grid-rows-1 grid-cols-[minmax(0,1fr)_5fr_minmax(0,1fr)]">
-            <LeftBar />
-            <FabricCanvas options={{ selection: true }} className="h-full" />
-            <RightBar />
-            <div className="absolute bottom-4 left-[50%] -translate-x-[50%]">
-              <ToolBar />
+    <Room>
+      <CanvasProvider>
+        <ToolProvider>
+          <div className="w-full h-dvh">
+            <div className="grid h-full grid-cols-[minmax(0,1fr)_5fr_minmax(0,1fr)]">
+              <div className="col-span-3 p-4 border-b">
+                <div className="flex items-center">
+                  <OthersPresence />
+                  <MyPresence />
+                </div>
+              </div>
+              <LeftBar />
+              <FabricCanvas options={{ selection: true }} className="h-full" />
+              <RightBar />
+              <div className="absolute bottom-4 left-[50%] -translate-x-[50%]">
+                <ToolBar />
+              </div>
             </div>
           </div>
-        </div>
-      </ToolProvider>
-    </CanvasProvider>
+        </ToolProvider>
+      </CanvasProvider>
+    </Room>
   );
 };
 
