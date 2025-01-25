@@ -1,14 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { Canvas } from "fabric";
 import { Eye, EyeOff } from "lucide-react";
-import { useEffect, useState } from "react";
-import {
-  useMutation,
-  useOthers,
-  useStorage,
-  useUpdateMyPresence,
-} from "@liveblocks/react/suspense";
+import { useMutation, useStorage } from "@liveblocks/react/suspense";
 import {
   LiveblocksProvider,
   RoomProvider,
@@ -19,13 +14,15 @@ import initialStorage from "@/constants/initial.storage";
 import ToolProvider from "@/contexts/tool-provider";
 import useCanvas from "@/hooks/use-canvas";
 import FabricCanvas from "@/components/fabric-canvas";
-import { ModeToggle } from "@/components/mode-toggle";
 import CanvasProvider from "@/contexts/canvas-provider";
-import { cn } from "@/lib/utils";
-import { UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import Cursor from "@/components/cursor";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+
 import Tools from "./tools";
+import ControlPanel from "./control-panel";
+import { EditorLayout } from "./editor-layout";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type LayersProps = {
   canvas: Canvas;
@@ -74,7 +71,7 @@ const Layers = ({}: LayersProps) => {
   );
 };
 
-const LeftBar = () => {
+const AssetsPanel = () => {
   const canvas = useCanvas();
   const background = useStorage(({ fabricCanvas }) => fabricCanvas.background);
   const [color, setColor] = useState(background);
@@ -92,81 +89,18 @@ const LeftBar = () => {
   if (!canvas) return <></>;
 
   return (
-    <div>
-      <input
-        type="color"
-        onChange={(e) => {
-          setColor(e.target.value);
-          sync();
-        }}
-      />
-      <Layers canvas={canvas} />
-    </div>
-  );
-};
-
-const RightBar = () => {
-  return (
-    <div>
-      <ModeToggle />
-    </div>
-  );
-};
-
-const MyPresence = () => {
-  const canvas = useCanvas();
-  const update = useUpdateMyPresence();
-
-  useEffect(() => {
-    if (!canvas) return;
-    canvas.on("mouse:move", ({ scenePoint }) =>
-      update({
-        cursor: {
-          x: scenePoint.x,
-          y: scenePoint.y,
-        },
-      })
-    );
-  }, [canvas]);
-
-  return <></>;
-};
-
-const OthersPresence = () => {
-  const COLORS = [
-    "#E57373",
-    "#9575CD",
-    "#4FC3F7",
-    "#81C784",
-    "#FFF176",
-    "#FF8A65",
-    "#F06292",
-    "#7986CB",
-  ] as const;
-
-  const others = useOthers();
-
-  const getColor = (index: number) => {
-    if (index < 0) return COLORS[0];
-    if (index < COLORS.length) return COLORS[index];
-    return COLORS[index % COLORS.length];
-  };
-
-  return (
-    <ul className="flex items-center gap-4">
-      {others.map(({ connectionId, presence }) => (
-        <li key={connectionId}>
-          {connectionId}
-          {presence.cursor && (
-            <Cursor
-              x={presence.cursor.x}
-              y={presence.cursor.y}
-              color={getColor(connectionId)}
-            />
-          )}
-        </li>
-      ))}
-    </ul>
+    <ScrollArea className="h-full rounded-md border p-4">
+      <div>
+        <input
+          type="color"
+          onChange={(e) => {
+            setColor(e.target.value);
+            sync();
+          }}
+        />
+        <Layers canvas={canvas} />
+      </div>
+    </ScrollArea>
   );
 };
 
@@ -190,42 +124,35 @@ function DesignRoom(props: DesignRoomProps) {
         initialStorage={initialStorage}
         autoConnect
       >
-        <ClientSideSuspense fallback={<div>Loading…</div>}>
-          {children}
-        </ClientSideSuspense>
+        <ClientSideSuspense fallback={<></>}>{children}</ClientSideSuspense>
       </RoomProvider>
     </LiveblocksProvider>
   );
 }
 
-type DesignProps = {
+type DesignEditorProps = {
   room: DesignRoomOptions;
 };
 
-const DesignEditor = ({ room }: DesignProps) => {
+const DesignEditor = ({ room }: DesignEditorProps) => {
   return (
     <DesignRoom room={room}>
       <CanvasProvider>
         <ToolProvider>
-          <div className="w-full h-dvh">
-            <div className="grid h-full grid-cols-[minmax(0,1fr)_5fr_minmax(0,1fr)]">
-              <div className="col-span-3 p-4 border-b">
-                <div className="flex items-center">
-                  <OthersPresence />
-                  <MyPresence />
-                  <span className="ms-auto">
-                    <UserButton />
-                  </span>
-                </div>
-              </div>
-              <LeftBar />
+          <EditorLayout>
+            <EditorLayout.AssestPanel>
+              <AssetsPanel />
+            </EditorLayout.AssestPanel>
+            <EditorLayout.Canvas>
               <FabricCanvas options={{ selection: true }} className="h-full" />
-              <RightBar />
-              <div className="absolute bottom-4 left-[50%] -translate-x-[50%]">
+              <EditorLayout.Floating className="bottom-4 left-[50%] -translate-x-[50%]">
                 <Tools />
-              </div>
-            </div>
-          </div>
+              </EditorLayout.Floating>
+            </EditorLayout.Canvas>
+            <EditorLayout.ControlPanel>
+              <ControlPanel />
+            </EditorLayout.ControlPanel>
+          </EditorLayout>
         </ToolProvider>
       </CanvasProvider>
     </DesignRoom>
