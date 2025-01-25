@@ -63,13 +63,13 @@ declare global {
       }>;
     };
 
-    // Custom user info set when authenticating with a secret key
     UserMeta: {
       id: string;
       info: {
-        // Example properties, for useSelf, useUser, useOthers, etc.
-        // name: string;
-        // avatar: string;
+        firstName: string | null;
+        lastName: string | null;
+        avatar: string;
+        email: string;
       };
     };
 
@@ -86,10 +86,9 @@ declare global {
       // y: number;
     };
 
-    // Custom room info set with resolveRoomsInfo, for useRoomInfo
     RoomInfo: {
+      name: string;
       // Example, rooms with a title and url
-      // title: string;
       // url: string;
     };
   }

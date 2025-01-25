@@ -1,7 +1,8 @@
 "use client";
 
-import Design from "@/components/design";
+import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -10,7 +11,9 @@ export default function Home() {
         <SignInButton />
       </SignedOut>
       <SignedIn>
-        <Design />
+        <Button>
+          <Link href="/files">My Files</Link>
+        </Button>
       </SignedIn>
     </>
   );

@@ -9,10 +9,16 @@ import {
   useStorage,
   useUpdateMyPresence,
 } from "@liveblocks/react/suspense";
+import {
+  LiveblocksProvider,
+  RoomProvider,
+  ClientSideSuspense,
+} from "@liveblocks/react/suspense";
+import initialStorage from "@/constants/initial.storage";
 
 import ToolBar from "./toolbar";
 import { Button } from "./ui/button";
-import { Room } from "./room";
+
 import Cursor from "./cursor";
 import ToolProvider from "@/contexts/tool-provider";
 import useCanvas from "@/hooks/use-canvas";
@@ -165,9 +171,41 @@ const OthersPresence = () => {
   );
 };
 
-const Design = () => {
+type DesignRoomOptions = {
+  id: string;
+};
+
+type DesignRoomProps = {
+  children: React.ReactNode;
+  room: DesignRoomOptions;
+};
+
+function DesignRoom(props: DesignRoomProps) {
+  const { children, room } = props;
+
   return (
-    <Room>
+    <LiveblocksProvider authEndpoint="/api/liveblocks-auth" throttle={16}>
+      <RoomProvider
+        id={room.id}
+        initialPresence={{ cursor: { x: 0, y: 0 } }}
+        initialStorage={initialStorage}
+        autoConnect
+      >
+        <ClientSideSuspense fallback={<div>Loading…</div>}>
+          {children}
+        </ClientSideSuspense>
+      </RoomProvider>
+    </LiveblocksProvider>
+  );
+}
+
+type DesignProps = {
+  room: DesignRoomOptions;
+};
+
+const Design = ({ room }: DesignProps) => {
+  return (
+    <DesignRoom room={room}>
       <CanvasProvider>
         <ToolProvider>
           <div className="w-full h-dvh">
@@ -191,7 +229,7 @@ const Design = () => {
           </div>
         </ToolProvider>
       </CanvasProvider>
-    </Room>
+    </DesignRoom>
   );
 };
 
