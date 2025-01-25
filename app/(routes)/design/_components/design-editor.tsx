@@ -16,13 +16,12 @@ import useCanvas from "@/hooks/use-canvas";
 import FabricCanvas from "@/components/fabric-canvas";
 import CanvasProvider from "@/contexts/canvas-provider";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 import Tools from "./tools";
+import { PresenceCursors } from "./presence";
 import ControlPanel from "./control-panel";
 import { EditorLayout } from "./editor-layout";
-import { Skeleton } from "@/components/ui/skeleton";
 
 type LayersProps = {
   canvas: Canvas;
@@ -89,18 +88,16 @@ const AssetsPanel = () => {
   if (!canvas) return <></>;
 
   return (
-    <ScrollArea className="h-full rounded-md border p-4">
-      <div>
-        <input
-          type="color"
-          onChange={(e) => {
-            setColor(e.target.value);
-            sync();
-          }}
-        />
-        <Layers canvas={canvas} />
-      </div>
-    </ScrollArea>
+    <div>
+      <input
+        type="color"
+        onChange={(e) => {
+          setColor(e.target.value);
+          sync();
+        }}
+      />
+      <Layers canvas={canvas} />
+    </div>
   );
 };
 
@@ -148,6 +145,7 @@ const DesignEditor = ({ room }: DesignEditorProps) => {
               <EditorLayout.Floating className="bottom-4 left-[50%] -translate-x-[50%]">
                 <Tools />
               </EditorLayout.Floating>
+              <PresenceCursors />
             </EditorLayout.Canvas>
             <EditorLayout.ControlPanel>
               <ControlPanel />

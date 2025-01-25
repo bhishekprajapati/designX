@@ -76,7 +76,9 @@ EditorLayout.ControlPanel = ({ children }) => {
 EditorLayout.Canvas = ({ children }) => {
   return (
     <Panel order={2}>
-      <div className="h-full relative">{children}</div>
+      <div className="overflow-hidden h-full relative border-r-2 border-l-2">
+        {children}
+      </div>
     </Panel>
   );
 };
