@@ -11,16 +11,12 @@ export type TCircleLayerProps = {
 };
 
 export function CircleLayer(props: TCircleLayerProps) {
-  const {
-    layer: { type, ...layer },
-    canvas,
-    onModified,
-  } = props;
+  const { layer, canvas, onModified } = props;
 
   useEffect(() => {
     let circle = canvas.getObjects().find((obj) => obj.id === layer.id);
     if (!circle) {
-      circle = new Circle({ ...layer, id: layer.id });
+      circle = new Circle(layer);
       canvas.add(circle);
     } else {
       circle.set(layer);

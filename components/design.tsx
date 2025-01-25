@@ -20,12 +20,13 @@ import FabricCanvas from "@/components/fabric-canvas";
 import { ModeToggle } from "@/components/mode-toggle";
 import CanvasProvider from "@/contexts/canvas-provider";
 import { cn } from "@/lib/utils";
+import { UserButton } from "@clerk/nextjs";
 
 type LayersProps = {
   canvas: Canvas;
 };
 
-const Layers = ({ canvas }: LayersProps) => {
+const Layers = ({}: LayersProps) => {
   const layers = useStorage(({ fabricCanvas }) => fabricCanvas.layers);
 
   const updateVisibility = useMutation(
@@ -175,6 +176,9 @@ const Design = () => {
                 <div className="flex items-center">
                   <OthersPresence />
                   <MyPresence />
+                  <span className="ms-auto">
+                    <UserButton />
+                  </span>
                 </div>
               </div>
               <LeftBar />
