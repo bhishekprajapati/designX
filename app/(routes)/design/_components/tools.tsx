@@ -5,15 +5,15 @@ import * as fabric from "fabric";
 import { nanoid } from "nanoid";
 import { Circle, Square } from "lucide-react";
 
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
 import { useSelected } from "@/hooks/use-fabric";
 import useCanvas from "@/hooks/use-canvas";
 import { useMutation } from "@liveblocks/react";
 import { LiveList, LiveObject } from "@liveblocks/client";
 import type { TLiveLayerData } from "@/liveblocks.config";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-const ToolBar = () => {
+const Tools = () => {
   const canvas = useCanvas();
   const selected = useSelected();
 
@@ -90,4 +90,4 @@ const ToolBar = () => {
   );
 };
 
-export default ToolBar;
+export default Tools;

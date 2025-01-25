@@ -16,10 +16,6 @@ import {
 } from "@liveblocks/react/suspense";
 import initialStorage from "@/constants/initial.storage";
 
-import ToolBar from "./toolbar";
-import { Button } from "./ui/button";
-
-import Cursor from "./cursor";
 import ToolProvider from "@/contexts/tool-provider";
 import useCanvas from "@/hooks/use-canvas";
 import FabricCanvas from "@/components/fabric-canvas";
@@ -27,6 +23,9 @@ import { ModeToggle } from "@/components/mode-toggle";
 import CanvasProvider from "@/contexts/canvas-provider";
 import { cn } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import Cursor from "@/components/cursor";
+import Tools from "./tools";
 
 type LayersProps = {
   canvas: Canvas;
@@ -203,7 +202,7 @@ type DesignProps = {
   room: DesignRoomOptions;
 };
 
-const Design = ({ room }: DesignProps) => {
+const DesignEditor = ({ room }: DesignProps) => {
   return (
     <DesignRoom room={room}>
       <CanvasProvider>
@@ -223,7 +222,7 @@ const Design = ({ room }: DesignProps) => {
               <FabricCanvas options={{ selection: true }} className="h-full" />
               <RightBar />
               <div className="absolute bottom-4 left-[50%] -translate-x-[50%]">
-                <ToolBar />
+                <Tools />
               </div>
             </div>
           </div>
@@ -233,4 +232,4 @@ const Design = ({ room }: DesignProps) => {
   );
 };
 
-export default Design;
+export default DesignEditor;

@@ -1,7 +1,7 @@
-import Design from "@/components/design";
 import { liveblocks } from "@/lib/liveblocks";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import DesignEditor from "../_components/design-editor";
 
 type Params = {
   id: string;
@@ -14,6 +14,6 @@ export default async function design({ params }: { params: Params }) {
   const room = await liveblocks.getRoom(params.id);
 
   if (user.userId in room.usersAccesses)
-    return <Design room={{ id: room.id }} />;
+    return <DesignEditor room={{ id: room.id }} />;
   return <>forbidden</>;
 }
