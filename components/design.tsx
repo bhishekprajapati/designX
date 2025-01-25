@@ -26,31 +26,20 @@ type LayersProps = {
 };
 
 const Layers = ({ canvas }: LayersProps) => {
-  type Layer = ArrayType<ReturnType<typeof canvas.getObjects>>;
+  const layers = useStorage(({ fabricCanvas }) => fabricCanvas.layers);
 
-  const [layers, setLayers] = useState<Layer[]>([]);
-
-  const toggleVisibility = (layer: Layer) => {
-    if (layer.visible) {
-      layer.visible = false;
-      canvas.discardActiveObject();
-    } else {
-      layer.visible = true;
-      canvas.setActiveObject(layer);
-    }
-
-    canvas.renderAll();
-  };
-
-  useEffect(() => {
-    const refresh = () => setLayers(canvas.getObjects());
-    canvas.on("object:added", refresh);
-    canvas.on("object:removed", refresh);
-    return () => {
-      canvas.off("object:added", refresh);
-      canvas.off("object:removed", refresh);
-    };
-  }, [canvas]);
+  const updateVisibility = useMutation(
+    ({ storage }, id: string, visible: boolean) => {
+      storage
+        .get("fabricCanvas")
+        .get("layers")
+        .find((layer) => layer.get("id") === id)
+        ?.update({
+          visible,
+        });
+    },
+    [layers]
+  );
 
   return (
     <div className="p-4">
@@ -60,8 +49,7 @@ const Layers = ({ canvas }: LayersProps) => {
           <li
             key={layer.id}
             className={cn("ps-4 pe-2 rounded-sm flex items-center gap-4", {
-              "bg-gray-100 dark:bg-slate-900":
-                canvas.getActiveObject() === layer,
+              "bg-gray-100 dark:bg-slate-900": false,
             })}
           >
             {layer.name}
@@ -69,7 +57,7 @@ const Layers = ({ canvas }: LayersProps) => {
               className="ms-auto"
               variant="ghost"
               size="icon"
-              onClick={() => toggleVisibility(layer)}
+              onClick={() => updateVisibility(layer.id, !layer.visible)}
             >
               {layer.visible ? <Eye size={16} /> : <EyeOff size={16} />}
             </Button>
@@ -106,7 +94,7 @@ const LeftBar = () => {
           sync();
         }}
       />
-      {/* <Layers canvas={canvas} /> */}
+      <Layers canvas={canvas} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { useMutation, useStorage } from "@liveblocks/react/suspense";
 import useCanvas from "@/hooks/use-canvas";
 import { RectangleLayer } from "./layers";
 import { TLiveLayerData } from "@/liveblocks.config";
+import { CircleLayer } from "./layers/circle-layer";
 
 const Layers = () => {
   const canvas = useCanvas();
@@ -19,11 +20,8 @@ const Layers = () => {
       .get("layers")
       .find((liveLayer) => liveLayer.get("id") === layer.id);
 
-    console.log("target layer", target);
     target?.update(layer);
   }, []);
-
-  console.log("rendering layers....");
 
   if (!canvas) return <></>;
 
@@ -31,11 +29,20 @@ const Layers = () => {
     <>
       {layers.map((layer) => (
         <Fragment key={layer.id}>
-          <RectangleLayer
-            canvas={canvas}
-            layer={layer}
-            onModified={(state) => modify(state)}
-          />
+          {layer.type === "Rect" && (
+            <RectangleLayer
+              canvas={canvas}
+              layer={layer}
+              onModified={(state) => modify(state)}
+            />
+          )}
+          {layer.type === "Circle" && (
+            <CircleLayer
+              canvas={canvas}
+              layer={layer}
+              onModified={(state) => modify(state)}
+            />
+          )}
         </Fragment>
       ))}
     </>

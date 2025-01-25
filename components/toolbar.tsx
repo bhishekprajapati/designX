@@ -1,15 +1,16 @@
 "use client";
 
-import { Square } from "lucide-react";
+import { useEffect } from "react";
+import * as fabric from "fabric";
+import { nanoid } from "nanoid";
+import { Circle, Square } from "lucide-react";
+
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { useSelected } from "@/hooks/use-fabric";
-import { useEffect } from "react";
 import useCanvas from "@/hooks/use-canvas";
 import { useMutation } from "@liveblocks/react";
 import { LiveList, LiveObject } from "@liveblocks/client";
-import { Rect, Circle } from "fabric";
-import { nanoid } from "nanoid";
 import type { TLiveLayerData } from "@/liveblocks.config";
 
 const ToolBar = () => {
@@ -27,7 +28,7 @@ const ToolBar = () => {
     if (!canvas) return;
     canvas.defaultCursor = "crosshair";
     canvas.once("mouse:down", ({ pointer }) => {
-      const rect = new Rect({
+      const rect = new fabric.Rect({
         id: nanoid(),
         name: "Rectangle",
         top: pointer.y,
@@ -38,9 +39,7 @@ const ToolBar = () => {
       canvas.defaultCursor = "default";
       canvas.add(rect);
       canvas.renderAll();
-      const layer = rect.toJSON() as TLiveLayerData;
-      console.log("og", layer);
-      addLayer(layer);
+      addLayer(rect.toJSON() as TLiveLayerData);
     });
   };
 
@@ -48,21 +47,24 @@ const ToolBar = () => {
     if (!canvas) return;
     canvas.defaultCursor = "crosshair";
     canvas.once("mouse:down", ({ pointer }) => {
-      const circle = new Circle({
+      const circle = new fabric.Circle({
         id: nanoid(),
         name: "Circle",
         top: pointer.y,
         left: pointer.x,
+        radius: 50,
+        fill: "black",
       });
 
       canvas.add(circle);
       canvas.setActiveObject(circle);
       canvas.defaultCursor = "default";
+      addLayer(circle.toJSON() as TLiveLayerData);
+      console.log("og: ", circle.toJSON());
     });
   };
 
   useEffect(() => {
-    // delete selected
     const remove = (event: KeyboardEvent) => {
       if (event.key === "Delete" && canvas) {
         canvas.remove(...selected);
@@ -81,9 +83,9 @@ const ToolBar = () => {
       <Button variant="ghost" size="icon" onClick={addRect}>
         <Square size={16} />
       </Button>
-      {/* <Button variant="ghost" size="icon" onClick={addCircle}>
+      <Button variant="ghost" size="icon" onClick={addCircle}>
         <Circle size={16} />
-      </Button> */}
+      </Button>
     </Card>
   );
 };

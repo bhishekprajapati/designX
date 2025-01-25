@@ -1,14 +1,54 @@
-import type { LiveList, LiveObject } from "@liveblocks/client";
+import type { JsonObject, LiveList, LiveObject } from "@liveblocks/client";
 
-export type TLiveLayerData = {
+interface IBaseLiveLayerData extends JsonObject {
   id: string;
   name: string;
-  type: "Rect";
+  backgroundColor: string;
+  opacity: number;
+  // originX: string;
+  // originY: string;
+  // paintFirst: string;
   top: number;
   left: number;
   width: number;
   height: number;
-};
+  angle: 0;
+  fill: string;
+  // fillRule: string;
+  flipX: boolean;
+  flipY: boolean;
+  // globalCompositeOperation: string;
+  scaleX: number;
+  scaleY: number;
+  shadow: null;
+  skewX: number;
+  skewY: number;
+  stroke: null;
+  strokeDashArray: null;
+  strokeDashOffset: number;
+  // strokeLineCap: string;
+  // strokeLineJoin: string;
+  strokeMiterLimit: number;
+  strokeUniform: boolean;
+  strokeWidth: number;
+  visible: boolean;
+}
+
+export interface ILiveRectLayerData extends IBaseLiveLayerData {
+  type: "Rect";
+  rx: number;
+  ry: number;
+}
+
+export interface ILiveCircleLayerData extends IBaseLiveLayerData {
+  type: "Circle";
+  counterClockwise: false;
+  endAngle: 360;
+  radius: 50;
+  startAngle: 0;
+}
+
+export type TLiveLayerData = ILiveRectLayerData | ILiveCircleLayerData;
 
 declare global {
   interface Liveblocks {
