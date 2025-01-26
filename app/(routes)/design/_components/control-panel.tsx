@@ -14,9 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
 import { PresenceAvatars } from "./presence";
 import { useMutation, useStorage } from "@liveblocks/react";
-import { useState } from "react";
 import ColorPicker from "@/components/color-picker";
-import { Input } from "@/components/ui/input";
 
 const ColabControls = () => {
   return (
