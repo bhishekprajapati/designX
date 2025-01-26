@@ -66,7 +66,7 @@ EditorLayout.AssestPanel = ({ children }) => {
 EditorLayout.ControlPanel = ({ children }) => {
   return (
     <Panel maxSize={15} order={3}>
-      <div className="h-full relative">
+      <div className="h-full relative z-50">
         <ScrollArea className="h-full">{children}</ScrollArea>
       </div>
     </Panel>
@@ -76,7 +76,7 @@ EditorLayout.ControlPanel = ({ children }) => {
 EditorLayout.Canvas = ({ children }) => {
   return (
     <Panel order={2}>
-      <div className="overflow-hidden h-full relative border-r-2 border-l-2">
+      <div className="overflow-hidden h-full relative z-30 border-r-2 border-l-2">
         {children}
       </div>
     </Panel>

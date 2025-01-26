@@ -76,3 +76,13 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .color-picker {
+    @apply relative;
+  }
+
+  .color-picker.react-colorful {
+    @apply w-full h-64 !rounded-none;
+  }
+}

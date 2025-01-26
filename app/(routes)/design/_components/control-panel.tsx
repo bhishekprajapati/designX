@@ -1,7 +1,5 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
-
 import {
   Dialog,
   DialogContent,
@@ -15,6 +13,10 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
 import { PresenceAvatars } from "./presence";
+import { useMutation, useStorage } from "@liveblocks/react";
+import { useState } from "react";
+import ColorPicker from "@/components/color-picker";
+import { Input } from "@/components/ui/input";
 
 const ColabControls = () => {
   return (
@@ -37,10 +39,35 @@ const ColabControls = () => {
   );
 };
 
+const PageControls = () => {
+  const background =
+    useStorage(({ fabricCanvas }) => fabricCanvas.background) ?? "gray";
+
+  const setColor = useMutation(({ storage }, color: string) => {
+    const fabric = storage.get("fabricCanvas");
+    fabric.update({
+      background: color,
+    });
+  }, []);
+
+  return (
+    <div>
+      <h3 className="mb-2 text-sm font-semibold">Page</h3>
+      <div className="flex gap-4 items-center">
+        <ColorPicker color={background} onChange={setColor} />
+      </div>
+    </div>
+  );
+};
+
 const ControlPanel = () => {
   return (
     <div>
       <ColabControls />
+      <Separator />
+      <div className="p-2">
+        <PageControls />
+      </div>
       <Separator />
       <div className="p-2">
         <ModeToggle />
