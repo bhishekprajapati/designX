@@ -17,29 +17,30 @@ export const useSelected = () => {
   >;
 
   const canvas = useCanvas();
-  const [selected, setSelected] = useState<Selectable[]>([]);
+  const [selected, setSelected] = useState<Map<string, Selectable>>(new Map());
 
   useEffect(() => {
     if (!canvas) return;
 
-    const created = ({ selected }: { selected: Selectable[] }) =>
-      setSelected(selected);
+    const upsert = ({ selected }: { selected: Selectable[] }) => {
+      const map = new Map<string, Selectable>();
+      selected.forEach((obj) => map.set(obj.id, obj));
+      setSelected(map);
+    };
 
-    const updated = ({ selected }: { selected: Selectable[] }) =>
-      setSelected(selected);
+    const cleared = ({ deselected }: { deselected: Selectable[] }) => {
+      const map = new Map<string, Selectable>();
+      deselected.map((obj) => map.delete(obj.id));
+      setSelected(new Map(map.entries()));
+    };
 
-    const cleared = ({ deselected }: { deselected: Selectable[] }) =>
-      setSelected(
-        Array.from(new Set(selected).difference(new Set(deselected)))
-      );
-
-    canvas.on("selection:created", created);
-    canvas.on("selection:updated", updated);
+    canvas.on("selection:created", upsert);
+    canvas.on("selection:updated", upsert);
     canvas.on("selection:cleared", cleared);
 
     return () => {
-      canvas.off("selection:created", created);
-      canvas.off("selection:updated", updated);
+      canvas.off("selection:created", upsert);
+      canvas.off("selection:updated", upsert);
       canvas.off("selection:cleared", cleared);
     };
   }, [canvas]);

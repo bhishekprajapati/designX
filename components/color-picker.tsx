@@ -35,17 +35,17 @@ const ColorPicker = ({ color, onChange }: ColorPickerProps) => {
 
   return (
     <FloatingModal>
-      <div className="flex items-center gap-2">
-        <FloatingModalTrigger
-          className="w-10 h-8 rounded-md"
-          style={{ backgroundColor: color }}
-        />
-        <Input
-          className="uppercase"
-          value={color?.slice(1)}
-          onChange={handleColorChange}
-        />
-      </div>
+      <Input
+        className="uppercase"
+        value={color?.slice(1)}
+        onChange={handleColorChange}
+        leftElement={
+          <FloatingModalTrigger
+            className="w-6 h-5 rounded-md"
+            style={{ backgroundColor: color }}
+          />
+        }
+      />
 
       <Draggable handle=".drag-handle">
         <FloatingModalContent>

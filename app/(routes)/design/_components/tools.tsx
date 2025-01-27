@@ -67,7 +67,7 @@ const Tools = () => {
   useEffect(() => {
     const remove = (event: KeyboardEvent) => {
       if (event.key === "Delete" && canvas) {
-        canvas.remove(...selected);
+        canvas.remove(...selected.values());
         canvas.renderAll();
       }
     };
