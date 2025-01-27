@@ -2,6 +2,7 @@
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/contexts/theme-provider";
+import { Toaster } from "react-hot-toast";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         disableTransitionOnChange
       >
         {children}
+        <Toaster
+          toastOptions={{
+            className: "!bg-secondary !text-secondary-foreground",
+          }}
+        />
       </ThemeProvider>
     </ClerkProvider>
   );

@@ -47,3 +47,14 @@ export const useSelected = () => {
 
   return selected;
 };
+
+export const useActiveObject = () => {
+  const canvas = useCanvas();
+  const selected = useSelected();
+
+  if (!canvas || selected.size !== 1) return;
+  const obj = canvas.getActiveObject();
+  if (!obj) return;
+
+  return selected.get(obj.id);
+};

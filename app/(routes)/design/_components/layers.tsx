@@ -7,7 +7,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { useSelected } from "@/hooks/use-fabric";
 import { ChangeEventHandler, useState } from "react";
 import { cn } from "@/lib/utils";
-import { TLiveLayerData } from "@/liveblocks.config";
+import { LayerType, TLiveLayerData } from "@/liveblocks.config";
 
 type LayerProps = {
   type: LayerType;

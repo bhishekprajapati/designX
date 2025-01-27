@@ -16,6 +16,10 @@ import ColorPicker from "@/components/color-picker";
 import { Block, BlockGroup, BlockGroupLabel, BlockLabel } from "./block";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/mode-toggle";
+import { useActiveObject } from "@/hooks/use-fabric";
+import { Color } from "@/utils/colors";
+import useCanvas from "@/hooks/use-canvas";
+import toast from "react-hot-toast";
 
 const ColabControls = () => {
   return (
@@ -103,9 +107,9 @@ export const OpacityControl = () => (
         <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
           <path
             className="fill-secondary-foreground"
-            fill-rule="evenodd"
+            fillRule="evenodd"
             d="M8 7h7a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1M6 8a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2zm8.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M13 10.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m-2 2a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m-2 2a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m1.5.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m2-2a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m.5 1.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m2-4a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m-.5 2.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m.5 1.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"
-            clip-rule="evenodd"
+            clipRule="evenodd"
           />
         </svg>
       }
@@ -124,15 +128,73 @@ export const CornerRadiusControl = () => (
         <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
           <path
             className="fill-secondary-foreground"
-            fill-rule="evenodd"
+            fillRule="evenodd"
             d="M12.478 8H15.5a.5.5 0 0 1 0 1h-3c-.708 0-1.21 0-1.601.032-.386.032-.622.092-.807.186a2 2 0 0 0-.874.874c-.094.185-.154.42-.186.807C9 11.29 9 11.792 9 12.5v3a.5.5 0 0 1-1 0v-3.022c0-.681 0-1.223.036-1.66.036-.448.113-.83.291-1.18a3 3 0 0 1 1.311-1.311c.35-.178.732-.255 1.18-.291C11.254 8 11.796 8 12.477 8"
-            clip-rule="evenodd"
+            clipRule="evenodd"
           ></path>
         </svg>
       }
     />
   </div>
 );
+
+const LayerControls = () => {
+  const canvas = useCanvas();
+  const obj = useActiveObject();
+  if (!canvas || !obj) return <></>;
+
+  const layerType = obj?.type;
+
+  const handleFillChange = (fill: string) => {
+    obj.fill = fill;
+    canvas.renderAll();
+  };
+
+  return (
+    <>
+      {/* <Block>
+        <BlockLabel>Layout</BlockLabel>
+        <BlockGroup>
+          <BlockGroupLabel>Dimensions</BlockGroupLabel>
+          <DimensionControl
+            width={50}
+            height={50}
+            onWidthChange={console.log}
+            onHeightChange={console.log}
+            onLinkChange={console.log}
+            linked
+          />
+        </BlockGroup>
+      </Block> */}
+      {/* <Block>
+        <BlockLabel>Appearance</BlockLabel>
+        <div className="flex gap-2">
+          <BlockGroup className="pe-0">
+            <BlockGroupLabel>Opacity</BlockGroupLabel>
+            <OpacityControl />
+          </BlockGroup>
+          {layerType === "rect" && (
+            <BlockGroup className="ps-0">
+              <BlockGroupLabel>Corner radius</BlockGroupLabel>
+              <CornerRadiusControl />
+            </BlockGroup>
+          )}
+        </div>
+      </Block> */}
+      <Block>
+        <BlockLabel>Fill</BlockLabel>
+        <BlockGroup className="pe-0">
+          {obj?.fill && (
+            <ColorPicker
+              color={Color.toHex(obj.fill.toString())}
+              onChange={handleFillChange}
+            />
+          )}
+        </BlockGroup>
+      </Block>
+    </>
+  );
+};
 
 const ControlPanel = () => {
   return (
@@ -148,33 +210,7 @@ const ControlPanel = () => {
           <PageBackgroundControl />
         </BlockGroup>
       </Block>
-      {/* <Block>
-        <BlockLabel>Layout</BlockLabel>
-        <BlockGroup>
-          <BlockGroupLabel>Dimensions</BlockGroupLabel>
-          <DimensionControl
-            width={50}
-            height={50}
-            onWidthChange={console.log}
-            onHeightChange={console.log}
-            onLinkChange={console.log}
-            linked
-          />
-        </BlockGroup>
-      </Block>
-      <Block>
-        <BlockLabel>Appearance</BlockLabel>
-        <div className="flex gap-2">
-          <BlockGroup className="pe-0">
-            <BlockGroupLabel>Opacity</BlockGroupLabel>
-            <OpacityControl />
-          </BlockGroup>
-          <BlockGroup className="ps-0">
-            <BlockGroupLabel>Corner radius</BlockGroupLabel>
-            <CornerRadiusControl />
-          </BlockGroup>
-        </div>
-      </Block> */}
+      <LayerControls />
       <ModeToggle />
     </>
   );

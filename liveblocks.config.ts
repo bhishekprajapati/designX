@@ -1,5 +1,8 @@
 import type { JsonObject, LiveList, LiveObject } from "@liveblocks/client";
 
+export type LayerType = "Rect" | "Circle";
+export type SelectLayerType<T extends LayerType> = T;
+
 interface IBaseLiveLayerData extends JsonObject {
   id: string;
   name: string;
@@ -35,13 +38,13 @@ interface IBaseLiveLayerData extends JsonObject {
 }
 
 export interface ILiveRectLayerData extends IBaseLiveLayerData {
-  type: "Rect";
+  type: SelectLayerType<"Rect">;
   rx: number;
   ry: number;
 }
 
 export interface ILiveCircleLayerData extends IBaseLiveLayerData {
-  type: "Circle";
+  type: SelectLayerType<"Circle">;
   counterClockwise: false;
   endAngle: 360;
   radius: 50;
