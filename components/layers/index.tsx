@@ -1,3 +1,4 @@
+import { LayerType } from "@/liveblocks.config";
 import { FabricObject } from "fabric";
 
 FabricObject.customProperties = ["name", "id"];

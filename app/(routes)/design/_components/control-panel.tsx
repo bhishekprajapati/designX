@@ -145,9 +145,24 @@ const LayerControls = () => {
 
   const layerType = obj?.type;
 
-  const handleFillChange = (fill: string) => {
-    obj.fill = fill;
-    canvas.renderAll();
+  const FillControl = () => {
+    const handleFillChange = (fill: string) => {
+      obj.fill = fill;
+      canvas.renderAll();
+    };
+
+    const color = Color.toHex(
+      obj?.fill === null ? "#000" : obj.fill.toString()
+    );
+
+    return (
+      <Block>
+        <BlockLabel>Fill</BlockLabel>
+        <BlockGroup className="pe-0">
+          {color && <ColorPicker color={color} onChange={handleFillChange} />}
+        </BlockGroup>
+      </Block>
+    );
   };
 
   return (
@@ -181,17 +196,7 @@ const LayerControls = () => {
           )}
         </div>
       </Block> */}
-      <Block>
-        <BlockLabel>Fill</BlockLabel>
-        <BlockGroup className="pe-0">
-          {obj?.fill && (
-            <ColorPicker
-              color={Color.toHex(obj.fill.toString())}
-              onChange={handleFillChange}
-            />
-          )}
-        </BlockGroup>
-      </Block>
+      <FillControl />
     </>
   );
 };
