@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useMemo } from "react";
 import { useOthers, useSelf, useUpdateMyPresence } from "@liveblocks/react";
-import useCanvas from "@/hooks/use-canvas";
+import { useCanvas } from "@/hooks/use-fabric";
 import Cursor from "@/components/cursor";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";

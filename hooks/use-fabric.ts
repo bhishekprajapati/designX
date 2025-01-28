@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import useCanvas from "./use-canvas";
+import { useContext, useEffect, useState } from "react";
 import {
   FabricObject,
   FabricObjectProps,
   ObjectEvents,
   SerializedObjectProps,
 } from "fabric";
+import { FabricCanvasContext } from "@/contexts/fabric-provider";
+
+export const useCanvas = () => {
+  const ctx = useContext(FabricCanvasContext);
+  if (!ctx) {
+    throw Error("FabricCanvas is uninitialized");
+  }
+  return ctx;
+};
 
 export const useSelected = () => {
   type Selectable = FabricObject<

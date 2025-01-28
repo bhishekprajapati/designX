@@ -1,6 +1,6 @@
 "use client";
 
-import useCanvas from "@/hooks/use-canvas";
+import { useCanvas } from "@/hooks/use-fabric";
 import { Fragment } from "react";
 import { useMutation, useStorage } from "@liveblocks/react/suspense";
 import { TLiveLayerData } from "@/liveblocks.config";

@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 import { Circle, Square } from "lucide-react";
 
 import { useSelected } from "@/hooks/use-fabric";
-import useCanvas from "@/hooks/use-canvas";
+import { useCanvas } from "@/hooks/use-fabric";
 import { useMutation } from "@liveblocks/react";
 import { LiveList, LiveObject } from "@liveblocks/client";
 import type { TLiveLayerData } from "@/liveblocks.config";

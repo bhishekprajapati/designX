@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useActiveObject } from "@/hooks/use-fabric";
 import { Color } from "@/utils/colors";
-import useCanvas from "@/hooks/use-canvas";
+import { useCanvas } from "@/hooks/use-fabric";
 
 const ColabControls = () => {
   return (
