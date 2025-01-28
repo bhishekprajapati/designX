@@ -25,7 +25,6 @@ const Tools = () => {
   }, []);
 
   const addRect = () => {
-    if (!canvas) return;
     canvas.defaultCursor = "crosshair";
     canvas.once("mouse:down", ({ pointer }) => {
       const rect = new fabric.Rect({
@@ -44,7 +43,6 @@ const Tools = () => {
   };
 
   const addCircle = () => {
-    if (!canvas) return;
     canvas.defaultCursor = "crosshair";
     canvas.once("mouse:down", ({ pointer }) => {
       const circle = new fabric.Circle({

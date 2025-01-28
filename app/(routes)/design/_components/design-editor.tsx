@@ -9,8 +9,6 @@ import initialStorage from "@/constants/initial.storage";
 import { useNetworkState } from "@uidotdev/usehooks";
 
 import ToolProvider from "@/contexts/tool-provider";
-import FabricCanvas from "@/components/fabric-canvas";
-import CanvasProvider from "@/contexts/canvas-provider";
 
 import AssetsPanel from "./assets-panel";
 import ControlPanel from "./control-panel";
@@ -20,6 +18,8 @@ import Tools from "./tools";
 import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { CheckCircle2, X } from "lucide-react";
+import FabricCanvasProvider from "@/contexts/fabric-provider";
+import RenderLayers from "./render-layers";
 
 const NotifyNetworkState = () => {
   const { online } = useNetworkState();
@@ -90,25 +90,28 @@ type DesignEditorProps = {
 const DesignEditor = ({ room }: DesignEditorProps) => {
   return (
     <DesignRoom room={room}>
-      <CanvasProvider>
-        <ToolProvider>
-          <EditorLayout>
-            <EditorLayout.AssestPanel>
-              <AssetsPanel />
-            </EditorLayout.AssestPanel>
-            <EditorLayout.Canvas>
-              <FabricCanvas options={{ selection: true }} className="h-full" />
-              <EditorLayout.Floating className="bottom-4 left-[50%] -translate-x-[50%]">
-                <Tools />
-              </EditorLayout.Floating>
-              <PresenceCursors />
-            </EditorLayout.Canvas>
-            <EditorLayout.ControlPanel>
-              <ControlPanel />
-            </EditorLayout.ControlPanel>
-          </EditorLayout>
-        </ToolProvider>
-      </CanvasProvider>
+      <FabricCanvasProvider options={{ selection: true }}>
+        {({ ctx, fabricCanvas }) => (
+          <ToolProvider>
+            <EditorLayout>
+              <EditorLayout.AssestPanel>
+                {ctx && <AssetsPanel />}
+              </EditorLayout.AssestPanel>
+              <EditorLayout.Canvas>
+                {fabricCanvas}
+                {ctx && <RenderLayers />}
+                <EditorLayout.Floating className="bottom-4 left-[50%] -translate-x-[50%]">
+                  {ctx && <Tools />}
+                </EditorLayout.Floating>
+                {ctx && <PresenceCursors />}
+              </EditorLayout.Canvas>
+              <EditorLayout.ControlPanel>
+                {ctx && <ControlPanel />}
+              </EditorLayout.ControlPanel>
+            </EditorLayout>
+          </ToolProvider>
+        )}
+      </FabricCanvasProvider>
       <NotifyNetworkState />
     </DesignRoom>
   );

@@ -19,7 +19,6 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { useActiveObject } from "@/hooks/use-fabric";
 import { Color } from "@/utils/colors";
 import useCanvas from "@/hooks/use-canvas";
-import toast from "react-hot-toast";
 
 const ColabControls = () => {
   return (
@@ -141,7 +140,7 @@ export const CornerRadiusControl = () => (
 const LayerControls = () => {
   const canvas = useCanvas();
   const obj = useActiveObject();
-  if (!canvas || !obj) return <></>;
+  if (!obj) return <></>;
 
   const layerType = obj?.type;
 

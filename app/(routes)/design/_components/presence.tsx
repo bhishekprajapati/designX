@@ -30,7 +30,6 @@ export const PresenceCursors = () => {
   const others = useOthers();
 
   useEffect(() => {
-    if (!canvas) return;
     canvas.on("mouse:move", ({ scenePoint }) =>
       update({
         cursor: {

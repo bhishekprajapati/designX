@@ -7,8 +7,6 @@ import Layers from "./layers";
 const AssetsPanel = () => {
   const canvas = useCanvas();
 
-  if (!canvas) return <></>;
-
   return (
     <Block>
       <BlockLabel>Layers</BlockLabel>

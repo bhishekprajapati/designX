@@ -1,7 +1,5 @@
 "use client";
 
-import colors from "@/constants/colors";
-import useCanvas from "@/hooks/use-canvas";
 import {
   useState,
   createContext,

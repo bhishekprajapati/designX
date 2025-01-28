@@ -20,8 +20,6 @@ export const useSelected = () => {
   const [selected, setSelected] = useState<Map<string, Selectable>>(new Map());
 
   useEffect(() => {
-    if (!canvas) return;
-
     const upsert = ({ selected }: { selected: Selectable[] }) => {
       const map = new Map<string, Selectable>();
       selected.forEach((obj) => map.set(obj.id, obj));
@@ -52,7 +50,7 @@ export const useActiveObject = () => {
   const canvas = useCanvas();
   const selected = useSelected();
 
-  if (!canvas || selected.size !== 1) return;
+  if (selected.size !== 1) return;
   const obj = canvas.getActiveObject();
   if (!obj) return;
 
