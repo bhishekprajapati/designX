@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import * as fabric from "fabric";
 import { nanoid } from "nanoid";
-import { Circle, Square } from "lucide-react";
+import { Circle, Hand, MousePointer2, Square } from "lucide-react";
 
 import { useSelected } from "@/hooks/use-fabric";
 import { useCanvas } from "@/hooks/use-fabric";
@@ -12,10 +12,12 @@ import { LiveList, LiveObject } from "@liveblocks/client";
 import type { TLiveLayerData } from "@/liveblocks.config";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import useTools from "@/hooks/use-tools";
 
 const Tools = () => {
   const canvas = useCanvas();
   const selected = useSelected();
+  const tools = useTools();
 
   const addLayer = useMutation(({ storage }, layer: TLiveLayerData) => {
     const fabric = storage.get("fabricCanvas");
@@ -78,6 +80,20 @@ const Tools = () => {
 
   return (
     <Card className="flex gap-4 p-2">
+      <Button
+        variant={tools.mode === "move" ? "default" : "ghost"}
+        size="icon"
+        onClick={() => tools.setMode("move")}
+      >
+        <MousePointer2 size={16} />
+      </Button>
+      <Button
+        variant={tools.mode === "hand" ? "default" : "ghost"}
+        size="icon"
+        onClick={() => tools.setMode("hand")}
+      >
+        <Hand size={16} />
+      </Button>
       <Button variant="ghost" size="icon" onClick={addRect}>
         <Square size={16} />
       </Button>
