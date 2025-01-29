@@ -12,6 +12,12 @@ import { LiveList, LiveObject } from "@liveblocks/client";
 import type { TLiveLayerData } from "@/liveblocks.config";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useTools from "@/hooks/use-tools";
 
 const Tools = () => {
@@ -80,26 +86,70 @@ const Tools = () => {
 
   return (
     <Card className="flex gap-4 p-2">
-      <Button
-        variant={tools.mode === "move" ? "default" : "ghost"}
-        size="icon"
-        onClick={() => tools.setMode("move")}
-      >
-        <MousePointer2 size={16} />
-      </Button>
-      <Button
-        variant={tools.mode === "hand" ? "default" : "ghost"}
-        size="icon"
-        onClick={() => tools.setMode("hand")}
-      >
-        <Hand size={16} />
-      </Button>
-      <Button variant="ghost" size="icon" onClick={addRect}>
-        <Square size={16} />
-      </Button>
-      <Button variant="ghost" size="icon" onClick={addCircle}>
-        <Circle size={16} />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={tools.mode === "move" ? "default" : "ghost"}
+              size="icon"
+              onClick={() => tools.setMode("move")}
+            >
+              <MousePointer2 size={16} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Move tool</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={tools.mode === "hand" ? "default" : "ghost"}
+              size="icon"
+              onClick={() => tools.setMode("hand")}
+            >
+              <Hand size={16} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Hand Tool</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild></TooltipTrigger>
+          <TooltipContent>
+            <p>Add to library</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={addRect}>
+              <Square size={16} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Rectangle Shape Tool</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={addCircle}>
+              <Circle size={16} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Circle Shape Tool</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </Card>
   );
 };
