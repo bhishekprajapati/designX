@@ -25,6 +25,7 @@ import DisableZoom from "@/components/disable-zoom";
 import { useCanvas } from "@/hooks/use-fabric";
 import useTools from "@/hooks/use-tools";
 import type { TPointerEvent, TPointerEventInfo } from "fabric";
+import TopBar from "./top-bar";
 
 const CanvasPanning = () => {
   const tools = useTools();
@@ -171,7 +172,7 @@ const DesignEditor = ({ room }: DesignEditorProps) => {
       <FabricCanvasProvider options={{ selection: true }}>
         {({ ctx, fabricCanvas }) => (
           <ToolProvider>
-            <EditorLayout>
+            <EditorLayout renderTopBar={() => <TopBar />}>
               <EditorLayout.AssestPanel>
                 {ctx && <AssetsPanel />}
               </EditorLayout.AssestPanel>

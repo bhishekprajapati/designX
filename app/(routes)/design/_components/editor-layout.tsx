@@ -1,7 +1,11 @@
 "use client";
 
 import type { FC, HTMLProps, ReactNode } from "react";
-import { Panel, PanelGroup } from "react-resizable-panels";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
@@ -34,52 +38,61 @@ export const EditorLayout: TEditorLayout = ({ children, renderTopBar }) => {
   if (!renderTopBar) {
     return (
       <div className="w-dvw h-dvh overflow-hidden">
-        <PanelGroup direction="horizontal">{children}</PanelGroup>
+        <ResizablePanelGroup direction="horizontal">
+          {children}
+        </ResizablePanelGroup>
       </div>
     );
   }
 
   return (
     <div className="w-dvw h-dvh overflow-hidden">
-      <PanelGroup direction="vertical">
-        <Panel minSize={5} maxSize={5} order={1}>
+      <ResizablePanelGroup direction="vertical">
+        <ResizablePanel
+          minSize={6}
+          maxSize={6}
+          order={1}
+          className="border-b border-border"
+        >
           {renderTopBar()}
-        </Panel>
-        <Panel maxSize={95} order={2}>
-          <PanelGroup direction="horizontal">{children}</PanelGroup>
-        </Panel>
-      </PanelGroup>
+        </ResizablePanel>
+        <ResizablePanel maxSize={94} order={2}>
+          <ResizablePanelGroup direction="horizontal">
+            {children}
+          </ResizablePanelGroup>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
 
 EditorLayout.AssestPanel = ({ children }) => {
   return (
-    <Panel className="h-full" maxSize={15} order={1}>
+    <ResizablePanel className="h-full" maxSize={15} order={1}>
       <div className="h-full relative">
         <ScrollArea className="h-full">{children}</ScrollArea>
       </div>
-    </Panel>
+    </ResizablePanel>
   );
 };
 
 EditorLayout.ControlPanel = ({ children }) => {
   return (
-    <Panel maxSize={15} order={3}>
+    <ResizablePanel maxSize={15} order={3}>
       <div className="h-full relative z-50">
         <ScrollArea className="h-full">{children}</ScrollArea>
       </div>
-    </Panel>
+    </ResizablePanel>
   );
 };
 
 EditorLayout.Canvas = ({ children }) => {
   return (
-    <Panel order={2}>
+    <ResizablePanel order={2}>
       <div className="overflow-hidden h-full relative z-30 border-r-2 border-l-2">
         {children}
       </div>
-    </Panel>
+    </ResizablePanel>
   );
 };
 

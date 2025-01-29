@@ -1,21 +1,11 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
 import { Button } from "@/components/ui/button";
-import { Link2, Share2, Unlink2 } from "lucide-react";
-import { PresenceAvatars } from "./presence";
+import { Link2, Unlink2 } from "lucide-react";
 import { useMutation, useStorage } from "@liveblocks/react";
 import ColorPicker from "@/components/color-picker";
-import { Block, BlockGroup, BlockGroupLabel, BlockLabel } from "./block";
+import { Block, BlockGroup, BlockLabel } from "./block";
 import { Input } from "@/components/ui/input";
-import { ModeToggle } from "@/components/mode-toggle";
 import { useActiveObject } from "@/hooks/use-fabric";
 import { Color } from "@/utils/colors";
 import { useCanvas } from "@/hooks/use-fabric";
@@ -25,27 +15,9 @@ import { Badge } from "@/components/ui/badge";
 
 const ColabControls = () => {
   return (
-    <div>
-      <div className="mb-3 flex items-center justify-between">
-        <PresenceAvatars />
-        <Dialog>
-          <DialogTrigger>
-            <Button size="sm">
-              Share
-              <Share2 size={8} />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Share this file</DialogTitle>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      </div>
-      <div className="flex items-center justify-between">
-        <Badge variant="secondary">Design</Badge>
-        <ZoomControl />
-      </div>
+    <div className="flex items-center justify-between">
+      <Badge variant="secondary">Design</Badge>
+      <ZoomControl />
     </div>
   );
 };
@@ -300,7 +272,6 @@ const ControlPanel = () => {
         </BlockGroup>
       </Block>
       <LayerControls />
-      <ModeToggle />
     </>
   );
 };
