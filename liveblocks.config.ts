@@ -3,7 +3,7 @@ import type { JsonObject, LiveList, LiveObject } from "@liveblocks/client";
 export type LayerType = "Rect" | "Circle";
 export type SelectLayerType<T extends LayerType> = T;
 
-interface IBaseLiveLayerData extends JsonObject {
+interface IBaseLayerData extends JsonObject {
   id: string;
   name: string;
   backgroundColor: string;
@@ -37,13 +37,13 @@ interface IBaseLiveLayerData extends JsonObject {
   visible: boolean;
 }
 
-export interface ILiveRectLayerData extends IBaseLiveLayerData {
+export interface IRectLayerData extends IBaseLayerData {
   type: SelectLayerType<"Rect">;
   rx: number;
   ry: number;
 }
 
-export interface ILiveCircleLayerData extends IBaseLiveLayerData {
+export interface ICircleLayerData extends IBaseLayerData {
   type: SelectLayerType<"Circle">;
   counterClockwise: false;
   endAngle: 360;
@@ -51,30 +51,47 @@ export interface ILiveCircleLayerData extends IBaseLiveLayerData {
   startAngle: 0;
 }
 
-export type TLiveLayerData = ILiveRectLayerData | ILiveCircleLayerData;
+// WARN: DO NOT FORGET KEEP BOTH THE WRITTEN BELOW TYPES IN SYNC
+export type TLiveRoomStorage = {
+  fabricCanvas: LiveObject<{
+    background: string;
+    layers: LiveList<LiveObject<IRectLayerData> | LiveObject<ICircleLayerData>>;
+  }>;
+};
+
+export type TSerializedLiveRoomStorage = {
+  fabricCanvas: {
+    background: string;
+    layers: Array<IRectLayerData | ICircleLayerData>;
+  };
+};
+
+export type FabricCanvasHydrationState = {
+  background: string;
+  objects: Array<IRectLayerData | ICircleLayerData>;
+};
+// --------------------------------------------------------------
+
+type TPresence = {
+  cursor: { x: number; y: number } | null;
+  randId: string;
+};
+
+type UserMeta = {
+  id: string;
+  info: {
+    firstName: string | null;
+    lastName: string | null;
+    avatar: string;
+    email: string;
+  };
+};
 
 declare global {
   interface Liveblocks {
-    Presence: {
-      cursor: { x: number; y: number } | null;
-    };
-
-    Storage: {
-      fabricCanvas: LiveObject<{
-        background: string;
-        layers: LiveList<LiveObject<TLiveLayerData>>;
-      }>;
-    };
-
-    UserMeta: {
-      id: string;
-      info: {
-        firstName: string | null;
-        lastName: string | null;
-        avatar: string;
-        email: string;
-      };
-    };
+    Presence: TPresence;
+    Storage: TLiveRoomStorage;
+    UserMeta: UserMeta;
 
     // Custom events, for useBroadcastEvent, useEventListener
     RoomEvent: {};

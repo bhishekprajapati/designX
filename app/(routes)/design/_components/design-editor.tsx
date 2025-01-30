@@ -1,5 +1,8 @@
 "use client";
 
+import toast from "react-hot-toast";
+import { useEffect, useRef } from "react";
+import { CheckCircle2, X } from "lucide-react";
 import {
   LiveblocksProvider,
   RoomProvider,
@@ -14,18 +17,15 @@ import AssetsPanel from "./assets-panel";
 import ControlPanel from "./control-panel";
 import { EditorLayout } from "./editor-layout";
 import { PresenceCursors } from "./presence";
-import Tools from "./tools";
-import toast from "react-hot-toast";
-import { useEffect, useRef } from "react";
-import { CheckCircle2, X } from "lucide-react";
+import ToolBar from "./tool-bar";
 import FabricCanvasProvider from "@/contexts/fabric-provider";
-import RenderLayers from "./render-layers";
 
 import DisableZoom from "@/components/disable-zoom";
 import { useCanvas } from "@/hooks/use-fabric";
 import useTools from "@/hooks/use-tools";
 import type { TPointerEvent, TPointerEventInfo } from "fabric";
 import TopBar from "./top-bar";
+import type { FabricCanvasHydrationState } from "@/liveblocks.config";
 
 const CanvasPanning = () => {
   const tools = useTools();
@@ -164,12 +164,15 @@ function DesignRoom(props: DesignRoomProps) {
 
 type DesignEditorProps = {
   room: DesignRoomOptions;
+  initialCanvasState: FabricCanvasHydrationState;
 };
 
-const DesignEditor = ({ room }: DesignEditorProps) => {
+const DesignEditor = (props: DesignEditorProps) => {
+  const { room, initialCanvasState } = props;
+
   return (
     <DesignRoom room={room}>
-      <FabricCanvasProvider options={{ selection: true }}>
+      <FabricCanvasProvider initialCanvasState={initialCanvasState}>
         {({ ctx, fabricCanvas }) => (
           <ToolProvider>
             <EditorLayout renderTopBar={() => <TopBar />}>
@@ -180,13 +183,12 @@ const DesignEditor = ({ room }: DesignEditorProps) => {
                 {fabricCanvas}
                 {ctx && (
                   <>
-                    <RenderLayers />
                     <DisableZoom />
                     <CanvasPanning />
                   </>
                 )}
                 <EditorLayout.Floating className="bottom-4 left-[50%] -translate-x-[50%]">
-                  {ctx && <Tools />}
+                  {ctx && <ToolBar />}
                 </EditorLayout.Floating>
                 {ctx && <PresenceCursors />}
               </EditorLayout.Canvas>

@@ -1,36 +1,63 @@
 "use client";
 
-import { Canvas } from "fabric";
-import { Circle, Eye, EyeClosed, Square } from "lucide-react";
-import { useMutation, useStorage } from "@liveblocks/react/suspense";
+import { FocusEventHandler } from "react";
+import { useState } from "react";
+import { FabricObjectProps, SerializedObjectProps, ObjectEvents } from "fabric";
+import { FabricObject } from "fabric";
+import { Circle as IconCircle, Eye, EyeClosed, Square } from "lucide-react";
+
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useSelected } from "@/hooks/use-fabric";
-import { ChangeEventHandler, useState } from "react";
+
+import { useActiveObject, useCanvas } from "@/hooks/use-fabric";
+import { useLayerObjects, useSelected } from "@/hooks/use-fabric";
+import { LayerType } from "@/liveblocks.config";
 import { cn } from "@/lib/utils";
-import { LayerType, TLiveLayerData } from "@/liveblocks.config";
+import { useMutation, useStorage } from "@liveblocks/react";
+
+declare module "fabric" {
+  interface FabricObject {
+    id: string;
+    name: string;
+    type: LayerType;
+  }
+
+  interface SerializedObjectProps {
+    id: string;
+    name: string;
+  }
+}
+
+FabricObject.customProperties = ["name", "id"];
 
 type LayerProps = {
-  type: LayerType;
-  name: string;
   isSelected: boolean;
   isVisible: boolean;
+  name: string;
+  type: LayerType;
   onNameChange: (name: string) => void;
-  onVisibilityChange: (isVisible: boolean) => void;
+  onVisibilityChange: (visible: boolean) => void;
+  onSelect: () => void;
 };
 
 const Layer = (props: LayerProps) => {
   const {
-    type,
     isSelected,
     isVisible,
     name,
     onNameChange,
+    onSelect,
     onVisibilityChange,
   } = props;
-
   const [allowEditing, setAllowEditing] = useState(false);
 
-  const handleNameChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+  // NOTE: in serialized fabric objects the first
+  // character of the word prop `type` is capitalized
+  // but for in-memory objects the whole type string
+  // is in lowercase. God knows why?
+  const type = props.type.toLowerCase();
+
+  const handleNameChange: FocusEventHandler<HTMLInputElement> = (e) => {
+    setAllowEditing(false);
     const newName = e.target.value.trim();
     if (!newName.length) return;
     if (newName === name) return;
@@ -38,7 +65,10 @@ const Layer = (props: LayerProps) => {
   };
 
   return (
-    <div className={isVisible ? "" : "opacity-50"}>
+    <div
+      className={cn("hover:cursor-pointer", isVisible ? "" : "opacity-50")}
+      onClick={onSelect}
+    >
       <div
         className={buttonVariants({
           variant: allowEditing || isSelected ? "secondary" : "ghost",
@@ -47,15 +77,14 @@ const Layer = (props: LayerProps) => {
         })}
       >
         <span>
-          {type === "Rect" && <Square className="scale-75" size={8} />}
-          {type === "Circle" && <Circle className="scale-75" size={8} />}
+          {type === "rect" && <Square className="scale-75" size={8} />}
+          {type === "circle" && <IconCircle className="scale-75" size={8} />}
         </span>
         {allowEditing ? (
           <input
             defaultValue={name}
             className="p-1 ps-2 w-full focus:outline-none rounded-lg"
-            onBlur={() => setAllowEditing(false)}
-            onChange={handleNameChange}
+            onBlur={handleNameChange}
             spellCheck="false"
             autoComplete="false"
             autoFocus
@@ -63,7 +92,7 @@ const Layer = (props: LayerProps) => {
         ) : (
           <span
             className="text-sm cursor-pointer"
-            onDoubleClick={() => setAllowEditing(true)}
+            onDoubleClick={(e) => setAllowEditing(true)}
           >
             {name}
           </span>
@@ -77,7 +106,10 @@ const Layer = (props: LayerProps) => {
             )}
             size="icon"
             variant="ghost"
-            onClick={() => onVisibilityChange(!isVisible)}
+            onClick={(e) => {
+              onVisibilityChange(!isVisible);
+              e.stopPropagation();
+            }}
           >
             {isVisible ? (
               <Eye className="scale-75" />
@@ -91,43 +123,81 @@ const Layer = (props: LayerProps) => {
   );
 };
 
-type LayersProps = {
-  canvas: Canvas;
+type LayerListItemProps = {
+  layer: FabricObject<
+    Partial<FabricObjectProps>,
+    SerializedObjectProps,
+    ObjectEvents
+  >;
 };
 
-const Layers = ({}: LayersProps) => {
-  const selected = useSelected();
-  const layers = useStorage(({ fabricCanvas }) => fabricCanvas.layers);
+const LayerListItem = (props: LayerListItemProps) => {
+  const { layer } = props;
+  const canvas = useCanvas();
+  const selectedLayers = useSelected();
+  const [, setActiveObject] = useActiveObject();
 
-  const patchLayerById = useMutation(
-    ({ storage }, id: string, patch: Partial<TLiveLayerData>) => {
-      storage
-        .get("fabricCanvas")
-        .get("layers")
-        .find((layer) => layer.get("id") === id)
-        ?.update(patch);
+  const updateName = useMutation(
+    ({ storage }, name: string) => {
+      const liveLayers = storage.get("fabricCanvas").get("layers");
+      const liveLayerObject = liveLayers.find(
+        (liveLayer) => liveLayer.get("id") === layer.id
+      );
+      if (!liveLayerObject) return false;
+      liveLayerObject.set("name", name);
+      layer.name = name;
+      return true;
     },
-    [layers]
+    [layer]
   );
+
+  const handleNameChange = (name: string) => {
+    const isSuccess = updateName(name);
+    isSuccess &&
+      canvas.fire("object:modified", {
+        target: layer,
+      });
+  };
+
+  const handleSelection = (obj: typeof layer) => {
+    setActiveObject(obj);
+  };
+
+  const handleVisibilityChange = (visible: boolean) => {
+    layer.visible = visible;
+    canvas.fire("object:modified", { target: layer });
+    canvas.requestRenderAll();
+  };
+
+  return (
+    <Layer
+      type={layer.type}
+      name={layer.name}
+      isVisible={layer.visible}
+      isSelected={selectedLayers.has(layer.id)}
+      onNameChange={handleNameChange}
+      onSelect={() => handleSelection(layer)}
+      onVisibilityChange={handleVisibilityChange}
+    />
+  );
+};
+
+export const LayerList = () => {
+  const layers = useLayerObjects({
+    events: {
+      "object:added": true,
+      "object:modified": true,
+      "object:removed": true,
+    },
+  });
 
   return (
     <ul className="[&>*:not(:last-child)]:mb-2">
       {layers.map((layer) => (
         <li key={layer.id}>
-          <Layer
-            name={layer.name}
-            type={layer.type}
-            isVisible={layer.visible}
-            isSelected={selected.has(layer.id)}
-            onVisibilityChange={(visible) =>
-              patchLayerById(layer.id, { visible })
-            }
-            onNameChange={(name) => patchLayerById(layer.id, { name })}
-          />
+          <LayerListItem layer={layer} />
         </li>
       ))}
     </ul>
   );
 };
-
-export default Layers;

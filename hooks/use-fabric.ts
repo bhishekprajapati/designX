@@ -2,6 +2,7 @@
 
 import { useContext, useEffect, useState } from "react";
 import {
+  Canvas,
   FabricObject,
   FabricObjectProps,
   ObjectEvents,
@@ -58,9 +59,55 @@ export const useActiveObject = () => {
   const canvas = useCanvas();
   const selected = useSelected();
 
-  if (selected.size !== 1) return;
-  const obj = canvas.getActiveObject();
-  if (!obj) return;
+  const getActiveObject = () => {
+    if (selected.size !== 1) return null;
+    // this method `canvas.getActiveObject` as of fabric v6.5.4
+    // returns a fabric object if only one object is selected
+    // otherwise null. In simple words, this will always return null
+    // in group selections
+    const active = canvas.getActiveObject();
+    if (!active) return null;
+    return selected.get(active.id);
+  };
 
-  return selected.get(obj.id);
+  const setActive = (obj: FabricObject) => {
+    canvas.setActiveObject(obj);
+    canvas.requestRenderAll();
+  };
+
+  return [getActiveObject(), setActive] as const;
+};
+
+type UseLayerObjectsOptions = {
+  events: Record<
+    "object:added" | "object:removed" | "object:modified",
+    boolean
+  >;
+};
+
+type LayerObject = ArrayType<ReturnType<Canvas["getObjects"]>>;
+/**
+ * Returns a list of local fabric objects
+ */
+export const useLayerObjects = (opts: UseLayerObjectsOptions) => {
+  const canvas = useCanvas();
+  const [layers, setLayers] = useState<LayerObject[]>(canvas.getObjects());
+
+  useEffect(() => {
+    const update = () => {
+      setLayers(canvas.getObjects());
+    };
+
+    opts.events["object:added"] && canvas.on("object:added", update);
+    opts.events["object:modified"] && canvas.on("object:modified", update);
+    opts.events["object:removed"] && canvas.on("object:removed", update);
+
+    return () => {
+      opts.events["object:added"] && canvas.off("object:added", update);
+      opts.events["object:modified"] && canvas.off("object:modified", update);
+      opts.events["object:removed"] && canvas.off("object:removed", update);
+    };
+  }, [canvas]);
+
+  return layers;
 };

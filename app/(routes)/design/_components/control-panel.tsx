@@ -196,19 +196,19 @@ export const CornerRadiusControl = () => (
 
 const LayerControls = () => {
   const canvas = useCanvas();
-  const obj = useActiveObject();
-  if (!obj) return <></>;
+  const [activeObject] = useActiveObject();
+  if (!activeObject) return <></>;
 
-  const layerType = obj?.type;
+  const layerType = activeObject?.type;
 
   const FillControl = () => {
     const handleFillChange = (fill: string) => {
-      obj.fill = fill;
+      activeObject.fill = fill;
       canvas.renderAll();
     };
 
     const color = Color.toHex(
-      obj?.fill === null ? "#000" : obj.fill.toString()
+      activeObject?.fill === null ? "#000" : activeObject.fill.toString()
     );
 
     return (
