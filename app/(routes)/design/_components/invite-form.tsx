@@ -3,22 +3,16 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Input } from "@ui/input";
+import { Button } from "@ui/button";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@ui/select";
 import { inviteFormSchema } from "@/lib/schema";
 
 const InviteForm = () => {

@@ -1,17 +1,18 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Link2, Unlink2 } from "lucide-react";
 import { useMutation, useStorage } from "@liveblocks/react";
-import ColorPicker from "@/components/color-picker";
-import { Block, BlockGroup, BlockLabel } from "./block";
-import { Input } from "@/components/ui/input";
-import { useActiveObject } from "@/hooks/use-fabric";
-import { Color } from "@/utils/colors";
-import { useCanvas } from "@/hooks/use-fabric";
 import { Point } from "fabric";
+import { Link2, Unlink2 } from "lucide-react";
 import { FocusEventHandler, useEffect, useRef, useState } from "react";
-import { Badge } from "@/components/ui/badge";
+
+import ColorPicker from "@/components/color-picker";
+import { Badge } from "@ui/badge";
+import { Button } from "@ui/button";
+import { Input } from "@ui/input";
+import { Block, BlockGroup, BlockLabel } from "@components/blocks";
+
+import { useActiveObject, useCanvas } from "@/hooks/use-fabric";
+import { Color } from "@/utils/colors";
 
 const ColabControls = () => {
   return (

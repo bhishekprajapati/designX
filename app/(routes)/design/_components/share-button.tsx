@@ -1,12 +1,12 @@
 import { Share2 } from "lucide-react";
-import { Button, type ButtonProps } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@ui/dialog";
 
 type ShareButtonProps = ButtonProps;
 const ShareButton = (props: ShareButtonProps) => {

@@ -1,5 +1,5 @@
 import { ModeToggle } from "@/components/mode-toggle";
-import { PresenceAvatars } from "./presence";
+import { PresenceAvatars } from "@components/presence";
 
 const TopBar = () => {
   return (

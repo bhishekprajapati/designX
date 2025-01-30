@@ -6,7 +6,7 @@ import { FabricObjectProps, SerializedObjectProps, ObjectEvents } from "fabric";
 import { FabricObject } from "fabric";
 import { Circle as IconCircle, Eye, EyeClosed, Square } from "lucide-react";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@ui/button";
 
 import { useActiveObject, useCanvas } from "@/hooks/use-fabric";
 import { useLayerObjects, useSelected } from "@/hooks/use-fabric";

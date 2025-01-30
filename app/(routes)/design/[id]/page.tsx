@@ -1,7 +1,7 @@
 import { getRoomState, liveblocks } from "@/lib/liveblocks";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import DesignEditor from "../_components/design-editor";
+import DesignEditor from "@editor/index";
 import { FabricCanvasHydrationState } from "@/liveblocks.config";
 
 type Params = {

@@ -1,12 +1,8 @@
 "use client";
 
 import type { FC, HTMLProps, ReactNode } from "react";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ResizablePanel, ResizablePanelGroup } from "@ui/resizable";
+import { ScrollArea } from "@ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 type EditorLayoutProps = {

@@ -1,21 +1,21 @@
 "use client";
 
 import * as fabric from "fabric";
-import { nanoid } from "nanoid";
 import { Circle, Hand, MousePointer2, Square } from "lucide-react";
-
+import { nanoid } from "nanoid";
 import { LiveList, LiveObject } from "@liveblocks/client";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useMutation } from "@liveblocks/react";
+
+import { Button } from "@ui/button";
+import { Card } from "@ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import useTools from "@/hooks/use-tools";
+} from "@ui/tooltip";
 import { useCanvas } from "@/hooks/use-fabric";
-import { useMutation } from "@liveblocks/react";
+import useTools from "@/hooks/use-tools";
 import { ICircleLayerData, IRectLayerData } from "@/liveblocks.config";
 
 const MoveTool = () => {

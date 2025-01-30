@@ -1,6 +1,4 @@
 import { getUsersAccesses } from "@/app/actions/acl";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 
 type UsersAccessesProps = {
   roomId: string;

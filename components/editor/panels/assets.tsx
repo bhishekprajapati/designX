@@ -1,7 +1,7 @@
 "use client";
 
-import { Block, BlockGroup, BlockLabel } from "./block";
-import { LayerList } from "./layers";
+import { Block, BlockGroup, BlockLabel } from "@components/blocks";
+import { LayerList } from "@editor/assets/layers";
 
 const AssetsPanel = () => {
   return (

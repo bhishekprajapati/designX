@@ -1,16 +1,17 @@
 "use client";
 
-import { Fragment, useEffect, useMemo } from "react";
 import { useOthers, useSelf, useUpdateMyPresence } from "@liveblocks/react";
-import { useCanvas } from "@/hooks/use-fabric";
+import { Fragment, useEffect, useMemo } from "react";
+
 import Cursor from "@/components/cursor";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@ui/avatar";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@ui/tooltip";
+import { useCanvas } from "@/hooks/use-fabric";
 
 export const PresenceCursors = () => {
   const canvas = useCanvas();

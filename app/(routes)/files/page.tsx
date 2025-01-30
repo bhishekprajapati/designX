@@ -1,4 +1,4 @@
-import { Card, CardHeader } from "@/components/ui/card";
+import { Card, CardHeader } from "@ui/card";
 import { getRoomsByUserId } from "@/lib/liveblocks";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
