@@ -3,12 +3,7 @@
 import toast from "react-hot-toast";
 import { useEffect, useRef } from "react";
 import { CheckCircle2, X } from "lucide-react";
-import {
-  LiveblocksProvider,
-  RoomProvider,
-  ClientSideSuspense,
-} from "@liveblocks/react/suspense";
-import initialStorage from "@/constants/initial.storage";
+
 import { useNetworkState } from "@uidotdev/usehooks";
 
 import ToolProvider from "@/contexts/tool-provider";
@@ -26,6 +21,7 @@ import useTools from "@/hooks/use-tools";
 import type { TPointerEvent, TPointerEventInfo } from "fabric";
 import TopBar from "./top-bar";
 import type { FabricCanvasHydrationState } from "@/liveblocks.config";
+import DesignRoomProvider from "@/contexts/design-room-provider";
 
 const CanvasPanning = () => {
   const tools = useTools();
@@ -136,32 +132,6 @@ type DesignRoomOptions = {
   id: string;
 };
 
-type DesignRoomProps = {
-  children: React.ReactNode;
-  room: DesignRoomOptions;
-};
-
-function DesignRoom(props: DesignRoomProps) {
-  const { children, room } = props;
-
-  return (
-    <LiveblocksProvider
-      authEndpoint="/api/liveblocks-auth"
-      throttle={100}
-      preventUnsavedChanges
-    >
-      <RoomProvider
-        id={room.id}
-        initialPresence={{ cursor: { x: 0, y: 0 } }}
-        initialStorage={initialStorage}
-        autoConnect
-      >
-        <ClientSideSuspense fallback={<></>}>{children}</ClientSideSuspense>
-      </RoomProvider>
-    </LiveblocksProvider>
-  );
-}
-
 type DesignEditorProps = {
   room: DesignRoomOptions;
   initialCanvasState: FabricCanvasHydrationState;
@@ -171,7 +141,7 @@ const DesignEditor = (props: DesignEditorProps) => {
   const { room, initialCanvasState } = props;
 
   return (
-    <DesignRoom room={room}>
+    <DesignRoomProvider roomId={room.id}>
       <FabricCanvasProvider initialCanvasState={initialCanvasState}>
         {({ ctx, fabricCanvas }) => (
           <ToolProvider>
@@ -200,7 +170,7 @@ const DesignEditor = (props: DesignEditorProps) => {
         )}
       </FabricCanvasProvider>
       <NotifyNetworkState />
-    </DesignRoom>
+    </DesignRoomProvider>
   );
 };
 
