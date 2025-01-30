@@ -7,6 +7,11 @@
     "build": "next build",
     "start": "next start"
   },
+  "author": {
+    "name": "Abhishek Prajapati",
+    "email": "contact@prajapati.pro",
+    "url": "https://prajapati.pro"
+  },
   "dependencies": {
     "@clerk/nextjs": "^6.10.2",
     "@hookform/resolvers": "^3.10.0",

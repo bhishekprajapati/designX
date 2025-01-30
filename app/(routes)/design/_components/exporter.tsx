@@ -1,7 +1,12 @@
 "use client";
 
 import { useCanvas, useSelected } from "@/hooks/use-fabric";
-import { Block, BlockGroup, BlockGroupLabel, BlockLabel } from "./block";
+import {
+  Block,
+  BlockGroup,
+  BlockGroupLabel,
+  BlockLabel,
+} from "@components/blocks";
 import { useEffect, useRef, useState } from "react";
 import type { ModifiedEvent, TPointerEvent } from "fabric";
 
