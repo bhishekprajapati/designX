@@ -1,6 +1,8 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
+import { ActivatedObjectContext } from "@/components/activated-object";
+
 import {
   Canvas,
   FabricObject,
@@ -76,6 +78,14 @@ export const useActiveObject = () => {
   };
 
   return [getActiveObject(), setActive] as const;
+};
+
+export const useActivatedObject = () => {
+  const ctx = useContext(ActivatedObjectContext);
+  if (ctx === undefined) {
+    throw Error("Must be called inside ActivatedObjectContext");
+  }
+  return ctx;
 };
 
 type UseLayerObjectsOptions = {

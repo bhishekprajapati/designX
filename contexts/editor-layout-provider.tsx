@@ -14,6 +14,7 @@ export const EditorLayoutContext = createContext<TEditorLayoutContext | null>(
 type EditorLayoutProviderProps = {
   children: React.ReactNode;
 };
+
 const EditorLayoutProvider = (props: EditorLayoutProviderProps) => {
   const { children } = props;
   const [isCollapsed, setIsCollapsed] = useState(false);
