@@ -54,6 +54,8 @@ export interface ICircleLayerData extends IBaseLayerData {
 // WARN: DO NOT FORGET KEEP BOTH THE WRITTEN BELOW TYPES IN SYNC
 export type TLiveRoomStorage = {
   fabricCanvas: LiveObject<{
+    name: string;
+    snapshot: string;
     background: string;
     layers: LiveList<LiveObject<IRectLayerData> | LiveObject<ICircleLayerData>>;
   }>;
@@ -87,6 +89,11 @@ type UserMeta = {
   };
 };
 
+export type TRoomMeta = {
+  name: string;
+  type: "design";
+};
+
 declare global {
   interface Liveblocks {
     Presence: TPresence;
@@ -106,11 +113,7 @@ declare global {
       // y: number;
     };
 
-    RoomInfo: {
-      name: string;
-      // Example, rooms with a title and url
-      // url: string;
-    };
+    RoomInfo: {};
   }
 }
 

@@ -16,6 +16,7 @@ import AssetsPanel from "@editor/panels/assets";
 import ControlPanel from "@editor/panels/controls";
 import ToolBar from "@editor/tool-bar";
 import TopBar from "@editor/top-bar";
+import CanvasSnapshot from "./canvas/snapshot";
 
 type DesignEditorProps = {
   room: {
@@ -42,6 +43,7 @@ const DesignEditor = (props: DesignEditorProps) => {
                   <>
                     <DisableZoom />
                     <CanvasPanning />
+                    <CanvasSnapshot />
                   </>
                 )}
                 <EditorLayout.Floating className="bottom-4 left-[50%] -translate-x-[50%]">

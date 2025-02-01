@@ -20,6 +20,7 @@ import ZoomControl from "@editor/canvas/controls/zoom-control";
 
 import { useActivatedObject } from "@/hooks/use-fabric";
 import { isRect } from "@/lib/fabric";
+import CanvasSnapshot from "../canvas/snapshot";
 
 const ColabControls = () => {
   return (
@@ -98,6 +99,13 @@ const ControlPanel = () => {
       <ActivatedObject>
         <LayerControls />
       </ActivatedObject>
+      <Block>
+        <BlockLabel>Export</BlockLabel>
+        <BlockGroup>
+          <BlockGroupLabel>Preview</BlockGroupLabel>
+          <CanvasSnapshot />
+        </BlockGroup>
+      </Block>
     </>
   );
 };

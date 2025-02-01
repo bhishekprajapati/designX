@@ -1,32 +1,15 @@
-import { Card, CardHeader } from "@ui/card";
-import { getRoomsByUserId } from "@/lib/liveblocks";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import FileCard from "@/components/file-card";
 import { CreateDesignButton } from "./_components/buttons";
-
-type DesignFileProps = {
-  name: string;
-  url: string;
-};
-
-const DesignFile = (props: DesignFileProps) => {
-  const { name, url } = props;
-
-  return (
-    <Card>
-      <CardHeader>{name}</CardHeader>
-      <a href={url}>open</a>
-    </Card>
-  );
-};
+import { getOwnerRooms } from "@/app/actions/room";
 
 export default async function files() {
-  const user = await auth();
+  const res = await getOwnerRooms(null);
+  if (!res.success) {
+    return <>an error occured while loading. {res.error.message}</>;
+  }
 
-  if (!user.userId) redirect("/");
-  const rooms = await getRoomsByUserId(user.userId);
-
-  if (!rooms.data.length)
+  const rooms = res.data;
+  if (!rooms.length)
     return (
       <>
         No files found <CreateDesignButton />
@@ -40,12 +23,15 @@ export default async function files() {
         <CreateDesignButton />
       </div>
 
-      <ul className="grid grid-cols-3 gap-8">
-        {rooms.data.map((room) => (
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+        {rooms.map((room) => (
           <li key={room.id}>
-            <DesignFile
-              name={room.metadata.name as string}
+            <FileCard
+              img={room.img}
+              name={room.name}
               url={`/design/${room.id}`}
+              createdAt={room.createdAt}
+              lastEditedAt={room.lastEditedAt}
             />
           </li>
         ))}
