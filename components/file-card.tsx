@@ -2,9 +2,9 @@
 
 import Moment from "react-moment";
 import { Clock1, PenTool } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type FileCardProps = {
   name: string;
@@ -16,29 +16,26 @@ type FileCardProps = {
 
 const FileCard = (props: FileCardProps) => {
   const { name, url, img, lastEditedAt, createdAt } = props;
-  const router = useRouter();
-  // @ts-expect-error
-  const open = () => router.push(url);
 
   return (
     <Card className="group overflow-hidden">
       <CardContent className="relative !p-0">
-        <img
-          onDoubleClick={open}
-          className="aspect-video object-cover border-b"
-          src={img}
-        />
+        <img className="aspect-video object-cover border-b" src={img} />
         <Button
           className="opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity absolute top-0 right-0 m-5"
           variant="outline"
           size="icon"
-          onClick={open}
+          asChild
         >
-          <PenTool size={16} />
+          <Link href={url as any}>
+            <PenTool size={16} />
+          </Link>
         </Button>
       </CardContent>
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
+        <CardTitle>
+          <Link href={url as any}>{name}</Link>
+        </CardTitle>
         <div className="flex items-center justify-between gap-2">
           <span>{lastEditedAt ? "Edited" : "Created"}</span>
           <span className="ms-auto">
