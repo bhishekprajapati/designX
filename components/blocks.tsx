@@ -33,7 +33,7 @@ export const BlockGroupLabel = ({
 }: BlockGroupLabelProps) => (
   <h3
     className={cn(
-      "mb-1 text-xs tracking-wide text-secondary-foreground",
+      "mb-1 text-xs tracking-wide text-muted-foreground",
       className
     )}
     {...restProps}

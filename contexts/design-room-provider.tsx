@@ -16,6 +16,9 @@ function DesignRoomProvider(props: {
 
   const initialStorage: Liveblocks["Storage"] = {
     fabricCanvas: new LiveObject({
+      name: "untitled",
+      snapshot:
+        "https://images.unsplash.com/photo-1612538498456-e861df91d4d0?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=annie-spratt-BcGoZXjyPzA-unsplash.jpg&w=640",
       background: "gray",
       layers: new LiveList([]),
     }),
