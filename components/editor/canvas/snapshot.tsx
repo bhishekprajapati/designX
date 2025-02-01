@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { debounce } from "lodash";
 import { useCanvas } from "@/hooks/use-fabric";
 import { cn } from "@/lib/utils";
-import { useMutation, useStorage, useSyncStatus } from "@liveblocks/react";
+import { useMutation, useStorage } from "@liveblocks/react";
 
 const CanvasSnapshot: React.FC<React.HTMLProps<HTMLDivElement>> = (props) => {
   const { className, ...restProps } = props;

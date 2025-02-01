@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useStorage } from "@liveblocks/react";
+import { ErrorBoundary } from "react-error-boundary";
 
 import ActivatedObject from "@/components/activated-object";
 import ColorPicker from "@/components/color-picker";
@@ -101,10 +102,12 @@ const ControlPanel = () => {
       </ActivatedObject>
       <Block>
         <BlockLabel>Export</BlockLabel>
-        <BlockGroup>
-          <BlockGroupLabel>Preview</BlockGroupLabel>
-          <CanvasSnapshot />
-        </BlockGroup>
+        <ErrorBoundary fallback={<></>}>
+          <BlockGroup>
+            <BlockGroupLabel>Preview</BlockGroupLabel>
+            <CanvasSnapshot />
+          </BlockGroup>
+        </ErrorBoundary>
       </Block>
     </>
   );
