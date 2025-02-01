@@ -5,6 +5,8 @@ import { ActionRouter } from "next-action-router/server/index";
 export const privateRouter = new ActionRouter({
   error: {
     codes: {
+      "max-limit-reached":
+        "cannot create design file. You have reached max limit per account",
       "internal-server-error": "somehting went wrong",
     },
   },

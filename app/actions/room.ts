@@ -4,11 +4,14 @@ import { nanoid } from "nanoid";
 import { liveblocks } from "@/lib/liveblocks";
 import { revalidatePath } from "next/cache";
 import { privateRouter } from "./router";
+import { canCreate } from "@/lib/permissions";
 
 export const createRoom = privateRouter
   .branch()
   .run(async ({ context }, res) => {
     const { user } = context;
+    const isAllowed = await canCreate(user.userId);
+    if (!isAllowed) return res.error("max-limit-reached");
     const room = await liveblocks.createRoom(nanoid(), {
       defaultAccesses: [],
       usersAccesses: {

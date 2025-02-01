@@ -1,10 +1,12 @@
 "use client";
 
-import { createRoom } from "@/app/actions/room";
 import { useMutation } from "@tanstack/react-query";
-import { Button } from "@ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+
+import { Button } from "@ui/button";
+import useToaster from "@/hooks/use-toaster";
+import { createRoom } from "@/app/actions/room";
 
 const useCreateMuatation = () => {
   const mutation = useMutation({
@@ -19,10 +21,12 @@ const useCreateMuatation = () => {
 };
 
 export const CreateDesignButton = () => {
+  const toaster = useToaster();
   const router = useRouter();
   const create = useCreateMuatation();
   const handler = () =>
     create.mutate(undefined, {
+      onError: (err) => toaster.error(err.message),
       onSuccess: ({ id }) => {
         router.push(`/design/${id}` as any);
       },
