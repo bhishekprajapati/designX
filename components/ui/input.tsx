@@ -1,28 +1,51 @@
 import * as React from "react";
-import { Mode } from "react-hook-form";
 import { z, ZodTypeAny } from "zod";
-
+import { cva, VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+
+const containerClasses = cn(
+  "gap-2 flex items-center",
+  "px-[.75em] py-[.25em] border border-input rounded-md",
+  "bg-secondary"
+);
+
+const input = cva(containerClasses, {
+  variants: {
+    sizeVariant: {
+      xs: "text-xs",
+      sm: "text-sm",
+      lg: "text-lg",
+      xl: "text-xl",
+    },
+  },
+  defaultVariants: {
+    sizeVariant: "xs",
+  },
+});
 
 type InputProps = React.ComponentProps<"input"> & {
   leftElement?: React.ReactNode;
   rightElement?: React.ReactNode;
-};
+} & VariantProps<typeof input>;
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, leftElement, rightElement, ...props }, ref) => {
+  (
+    { className, type, leftElement, rightElement, sizeVariant, ...props },
+    ref
+  ) => {
+    const containerClasses = input({ sizeVariant, className });
+    const inputClasses = cn(
+      "bg-transparent text-base shadow-sm placeholder:text-muted-foreground transition-colors",
+      "file:bg-transparent file:text-sm file:font-medium file:text-foreground file:border-0",
+      "flex h-7 w-full",
+      "disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+      "outline-none"
+    );
+
     return (
-      <div className="px-2 py-1 gap-2 flex items-center border border-input rounded-md bg-secondary">
+      <div className={containerClasses}>
         {leftElement}
-        <input
-          type={type}
-          className={cn(
-            "flex h-7 w-full bg-transparent text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
+        <input type={type} className={inputClasses} ref={ref} {...props} />
         {rightElement}
       </div>
     );
@@ -30,6 +53,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 
 Input.displayName = "Input";
+
+type InputControlHandlerContext<T> = {
+  value: T;
+  setValue: (value: T) => void;
+};
 
 type InputControlProps<T extends ZodTypeAny> = Omit<
   InputProps,
