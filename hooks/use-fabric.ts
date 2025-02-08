@@ -5,6 +5,7 @@ import { ActivatedObjectContext } from "@/components/activated-object";
 
 import {
   Canvas,
+  CanvasEvents,
   FabricObject,
   FabricObjectProps,
   ObjectEvents,
@@ -88,36 +89,39 @@ export const useActivatedObject = () => {
   return ctx;
 };
 
-type UseLayerObjectsOptions = {
-  events: Record<
-    "object:added" | "object:removed" | "object:modified",
-    boolean
-  >;
+type LayerObject = ArrayType<ReturnType<Canvas["getObjects"]>>;
+
+type UseFabricObjectsOptions = {
+  events?: Array<"object:added" | "object:modified" | "object:removed">;
 };
 
-type LayerObject = ArrayType<ReturnType<Canvas["getObjects"]>>;
 /**
  * Returns a list of local fabric objects
  */
-export const useLayerObjects = (opts: UseLayerObjectsOptions) => {
+export const useFabricObjects = (
+  opts: UseFabricObjectsOptions = { events: ["object:added", "object:removed"] }
+) => {
   const canvas = useCanvas();
   const [layers, setLayers] = useState<LayerObject[]>(canvas.getObjects());
 
   useEffect(() => {
-    const update = () => {
-      setLayers(canvas.getObjects());
-    };
+    if (!opts.events || !opts.events.length) return;
+    // to remove duplicated event names
+    const events = new Array(...new Set(opts.events));
+    const handler = () => setLayers(canvas.getObjects());
 
-    opts.events["object:added"] && canvas.on("object:added", update);
-    opts.events["object:modified"] && canvas.on("object:modified", update);
-    opts.events["object:removed"] && canvas.on("object:removed", update);
+    // register specified events and collect disposers
+    const disposers: Array<VoidFunction> = [];
+    events.forEach((event) => {
+      const disposer = canvas.on(event, handler);
+      disposers.push(disposer);
+    });
 
     return () => {
-      opts.events["object:added"] && canvas.off("object:added", update);
-      opts.events["object:modified"] && canvas.off("object:modified", update);
-      opts.events["object:removed"] && canvas.off("object:removed", update);
+      // invoke all the disposers
+      disposers.forEach((disposer) => disposer());
     };
-  }, [canvas]);
+  }, [canvas, opts.events]);
 
   return layers;
 };

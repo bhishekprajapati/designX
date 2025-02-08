@@ -16,6 +16,7 @@ const OpacityControl = () => {
         onSuccess: (opacity) => {
           obj.opacity = opacity / 100;
           canvas.requestRenderAll();
+          obj.fire("modified", { target: obj });
         },
         onError: ({ setValue, defaultValue, lastValidatedValue }) => {
           if (lastValidatedValue) {

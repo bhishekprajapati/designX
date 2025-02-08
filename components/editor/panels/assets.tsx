@@ -1,14 +1,14 @@
 "use client";
 
 import { Block, BlockGroup, BlockLabel } from "@components/blocks";
-import { LayerList } from "@editor/assets/layers";
+import { FabricObjectList } from "@editor/assets/objects";
 
 const AssetsPanel = () => {
   return (
     <Block>
       <BlockLabel>Layers</BlockLabel>
       <BlockGroup>
-        <LayerList />
+        <FabricObjectList />
       </BlockGroup>
     </Block>
   );

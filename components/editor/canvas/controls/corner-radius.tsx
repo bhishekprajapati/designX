@@ -10,7 +10,7 @@ const CornerRadiusControl = () => {
 
   return (
     <InputControl
-      defaultValue={0}
+      defaultValue={obj.get("rx")}
       validation={{
         schema: z.coerce.number().gte(0).lte(Number.MAX_VALUE),
         onSuccess(r) {
@@ -19,6 +19,7 @@ const CornerRadiusControl = () => {
             ry: r,
           });
           canvas.requestRenderAll();
+          obj.fire("modified", { target: obj });
         },
         onError({ setValue, defaultValue, lastValidatedValue }) {
           if (lastValidatedValue) {

@@ -15,6 +15,7 @@ const DimensionControl = () => {
     });
     obj.setCoords();
     canvas.requestRenderAll();
+    obj.fire("modified", { target: obj });
   };
 
   return (

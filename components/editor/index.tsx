@@ -17,6 +17,7 @@ import ControlPanel from "@editor/panels/controls";
 import ToolBar from "@editor/tool-bar";
 import TopBar from "@editor/top-bar";
 import CanvasSnapshot from "./canvas/snapshot";
+import CanvasContextMenu from "./canvas/context-menu";
 
 type DesignEditorProps = {
   room: {
@@ -38,7 +39,7 @@ const DesignEditor = (props: DesignEditorProps) => {
                 {ctx && <AssetsPanel />}
               </EditorLayout.AssestPanel>
               <EditorLayout.Canvas>
-                {fabricCanvas}
+                <CanvasContextMenu>{fabricCanvas}</CanvasContextMenu>
                 {ctx && (
                   <>
                     <DisableZoom />

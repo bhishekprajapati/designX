@@ -10,6 +10,7 @@ const FillControl = () => {
 
   const handleFillChange = (fill: string) => {
     obj.set("fill", fill);
+    obj.fire("modified", { target: obj });
     canvas.requestRenderAll();
   };
 
