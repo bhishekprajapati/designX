@@ -3,8 +3,6 @@
 import * as fabric from "fabric";
 import { Circle, Hand, MousePointer2, Square } from "lucide-react";
 import { nanoid } from "nanoid";
-import { LiveList, LiveObject } from "@liveblocks/client";
-import { useMutation } from "@liveblocks/react";
 
 import { Button } from "@ui/button";
 import { Card } from "@ui/card";
@@ -16,7 +14,6 @@ import {
 } from "@ui/tooltip";
 import { useCanvas } from "@/hooks/use-fabric";
 import useTools from "@/hooks/use-tools";
-import { ICircleLayerData, IRectLayerData } from "@/liveblocks.config";
 
 const MoveTool = () => {
   const tools = useTools();
@@ -67,13 +64,6 @@ const HandTool = () => {
 const RectShapeTool = () => {
   const canvas = useCanvas();
 
-  const sync = useMutation(({ storage }, layer: IRectLayerData) => {
-    const fabric = storage.get("fabricCanvas");
-    const layers = fabric.get("layers");
-    if (!layers) fabric.set("layers", new LiveList([]));
-    layers.push(new LiveObject(layer));
-  }, []);
-
   const create = () => {
     canvas.defaultCursor = "crosshair";
     canvas.once("mouse:down", ({ pointer }) => {
@@ -87,8 +77,7 @@ const RectShapeTool = () => {
       });
       canvas.defaultCursor = "default";
       canvas.add(rect);
-      canvas.renderAll();
-      sync(rect.toJSON() as IRectLayerData);
+      canvas.requestRenderAll();
     });
   };
 
@@ -110,12 +99,6 @@ const RectShapeTool = () => {
 
 const CircleShapeTool = () => {
   const canvas = useCanvas();
-  const sync = useMutation(({ storage }, layer: ICircleLayerData) => {
-    const fabric = storage.get("fabricCanvas");
-    const layers = fabric.get("layers");
-    if (!layers) fabric.set("layers", new LiveList([]));
-    layers.push(new LiveObject(layer));
-  }, []);
 
   const create = () => {
     canvas.defaultCursor = "crosshair";
@@ -131,7 +114,6 @@ const CircleShapeTool = () => {
       canvas.add(circle);
       canvas.setActiveObject(circle);
       canvas.defaultCursor = "default";
-      sync(circle.toJSON() as ICircleLayerData);
     });
   };
 

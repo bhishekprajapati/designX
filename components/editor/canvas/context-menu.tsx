@@ -9,14 +9,27 @@ import {
 } from "@/components/ui/context-menu";
 import { useActiveObject } from "@/hooks/use-fabric";
 import { FabricCanvasContext } from "@/contexts/fabric-provider";
+import { Canvas } from "fabric";
 
-const CanvasContextMenuContent = () => {
-  const canvas = useContext(FabricCanvasContext);
-  if (!canvas) return <></>;
+const CanvasContextMenuContent = ({ canvas }: { canvas: Canvas }) => {
   const [active] = useActiveObject();
+
   if (active) {
-    return <ContextMenuContent></ContextMenuContent>;
+    return (
+      <ContextMenuContent>
+        <ContextMenuItem
+          onClick={() =>
+            canvas.fire("object:remove", {
+              target: active,
+            })
+          }
+        >
+          Delete
+        </ContextMenuItem>
+      </ContextMenuContent>
+    );
   }
+
   return <></>;
 };
 
@@ -26,11 +39,12 @@ type CanvasContextMenuProps = {
 
 const CanvasContextMenu = (props: CanvasContextMenuProps) => {
   const { children } = props;
+  const canvas = useContext(FabricCanvasContext);
 
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
-      <CanvasContextMenuContent />
+      {canvas && <CanvasContextMenuContent canvas={canvas} />}
     </ContextMenu>
   );
 };

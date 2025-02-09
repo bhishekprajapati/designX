@@ -2,7 +2,13 @@
 
 import { FocusEventHandler, useCallback, useEffect } from "react";
 import { useState } from "react";
-import { SerializedObjectProps, ObjectEvents, type TEvent } from "fabric";
+import {
+  SerializedObjectProps,
+  ObjectEvents,
+  type TEvent,
+  Rect,
+  Circle,
+} from "fabric";
 import { FabricObject } from "fabric";
 import { Circle as IconCircle, Eye, EyeClosed, Square } from "lucide-react";
 import { omit } from "remeda";
@@ -15,9 +21,14 @@ import {
   useFabricObjects,
 } from "@/hooks/use-fabric";
 import { useSelected } from "@/hooks/use-fabric";
-import { LayerType } from "@/liveblocks.config";
+import {
+  ICircleLayerData,
+  IRectLayerData,
+  LayerType,
+} from "@/liveblocks.config";
 import { cn } from "@/lib/utils";
 import { shallow, useMutation, useStorage } from "@liveblocks/react";
+import { LiveList, LiveObject } from "@liveblocks/client";
 
 declare module "fabric" {
   interface FabricObject {
@@ -37,6 +48,10 @@ declare module "fabric" {
      * `visibility` are modified of an object
      */
     "object:modified:meta": Partial<TEvent> & {
+      target: FabricObject;
+    };
+
+    "object:remove": Partial<TEvent> & {
       target: FabricObject;
     };
   }
@@ -243,13 +258,6 @@ const FabricObjectListItem = (props: FabricObjectListItemProps) => {
     }
   }, [liveObjectState]);
 
-  console.log("object changed....", obj.id);
-
-  /**
-   * How should i update the control values
-   * when live state changes?
-   */
-
   return (
     <FabricObjectCard
       type={obj.type}
@@ -263,6 +271,90 @@ const FabricObjectListItem = (props: FabricObjectListItemProps) => {
   );
 };
 
+const SyncAddedOrRemovedObjects = () => {
+  const canvas = useCanvas();
+  const localObjects = useFabricObjects();
+  const liveObjects = useStorage((root) => root.fabricCanvas.layers);
+
+  const add = useMutation(
+    ({ storage }, objectData: IRectLayerData | ICircleLayerData) => {
+      const fabric = storage.get("fabricCanvas");
+      const layers = fabric.get("layers");
+      if (!layers) fabric.set("layers", new LiveList([]));
+      // @ts-expect-error
+      layers.push(new LiveObject(objectData));
+    },
+    [liveObjects]
+  );
+
+  const remove = useMutation(
+    ({ storage }, id) => {
+      const states = storage.get("fabricCanvas").get("layers");
+      const index = states.findIndex((state) => state.get("id") === id);
+      if (index === -1) return;
+      states.delete(index);
+    },
+    [liveObjects]
+  );
+
+  useEffect(() => {
+    if (liveObjects === null) return;
+    const localMap = new Map(localObjects.map((obj) => [obj.id, obj]));
+    const liveMap = new Map(liveObjects.map((obj) => [obj.id, obj]));
+
+    const addedObjectMap = (() => {
+      const map = new Map<string, IRectLayerData | ICircleLayerData>();
+      liveMap.forEach((value, key) => {
+        if (localMap.has(key)) return;
+        map.set(key, value);
+      });
+      return map;
+    })();
+
+    const removedObjectMap = (() => {
+      const map = new Map<string, ArrayType<typeof localObjects>>();
+      localMap.forEach((value, key) => {
+        if (liveMap.has(key)) return;
+        map.set(key, value);
+      });
+      return map;
+    })();
+
+    addedObjectMap.forEach((state) => {
+      switch (state.type) {
+        case "Rect":
+          const rect = new Rect();
+          rect.set(omit(state, ["type"]));
+          rect.setCoords();
+          canvas.add(rect);
+          break;
+        case "Circle":
+          const circle = new Circle();
+          circle.set(omit(state, ["type"]));
+          circle.setCoords();
+          canvas.add(circle);
+          break;
+      }
+    });
+
+    const removeTargets = Array.from(removedObjectMap.entries()).map(
+      ([, object]) => object
+    );
+    canvas.remove(...removeTargets);
+    canvas.requestRenderAll();
+  }, [canvas, localObjects, liveObjects]);
+
+  useEffect(() => {
+    const disposers = [
+      canvas.on("object:added", ({ target }) => add(target.toJSON())),
+      canvas.on("object:remove", ({ target }) => remove(target.id)),
+    ];
+    return () => disposers.forEach((dispose) => dispose());
+  }, [canvas, add, remove]);
+
+  return <></>;
+};
+
 export const FabricObjectList = () => {
   /**
    * This list will only be re-rendered
@@ -270,7 +362,6 @@ export const FabricObjectList = () => {
    * or existing objects are removed
    */
   const objs = useFabricObjects();
-  console.log("updating fabric object list...");
 
   return (
     <ul className="[&>*:not(:last-child)]:mb-2">
@@ -279,6 +370,7 @@ export const FabricObjectList = () => {
           <FabricObjectListItem obj={obj} />
         </li>
       ))}
+      <SyncAddedOrRemovedObjects />
     </ul>
   );
 };
