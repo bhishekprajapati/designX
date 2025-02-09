@@ -19,9 +19,10 @@ import FillControl from "@editor/canvas/controls/fill-control";
 import OpacityControl from "@editor/canvas/controls/opacity-control";
 import ZoomControl from "@editor/canvas/controls/zoom-control";
 
-import { useActivatedObject } from "@/hooks/use-fabric";
+import { useActivatedObject, useCanvas } from "@/hooks/use-fabric";
 import { isRect } from "@/lib/fabric";
 import CanvasSnapshot from "../canvas/snapshot";
+import { useEffect } from "react";
 
 const ColabControls = () => {
   return (
@@ -33,6 +34,7 @@ const ColabControls = () => {
 };
 
 const PageBackgroundControl = () => {
+  const canvas = useCanvas();
   const background =
     useStorage(({ fabricCanvas }) => fabricCanvas.background) ?? "gray";
 
@@ -43,7 +45,19 @@ const PageBackgroundControl = () => {
     });
   }, []);
 
-  return <ColorPicker color={background} onChange={setColor} />;
+  const handleColorChange = (color: string) => {
+    canvas.backgroundColor = color;
+    canvas.requestRenderAll();
+    setColor(color);
+  };
+
+  useEffect(() => {
+    if (canvas.backgroundColor === background) return;
+    canvas.backgroundColor = background;
+    canvas.requestRenderAll();
+  }, [background]);
+
+  return <ColorPicker color={background} onChange={handleColorChange} />;
 };
 
 const LayerControls = () => {
