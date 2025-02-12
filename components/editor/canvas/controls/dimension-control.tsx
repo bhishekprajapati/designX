@@ -1,8 +1,8 @@
 "use client";
 
-import { Input, InputControl } from "@ui/input";
+import { InputControl } from "@ui/input";
 import { useActivatedObject, useCanvas } from "@/hooks/use-fabric";
-import { number, z } from "zod";
+import { z } from "zod";
 
 const DimensionControl = () => {
   const canvas = useCanvas();

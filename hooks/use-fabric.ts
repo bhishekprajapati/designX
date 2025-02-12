@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { ActivatedObjectContext } from "@/components/activated-object";
 
 import {
@@ -8,8 +8,11 @@ import {
   CanvasEvents,
   FabricObject,
   FabricObjectProps,
+  IText,
   ObjectEvents,
   SerializedObjectProps,
+  TPointerEvent,
+  TPointerEventInfo,
 } from "fabric";
 import { FabricCanvasContext } from "@/contexts/fabric-provider";
 
@@ -124,4 +127,29 @@ export const useFabricObjects = (
   }, [canvas, opts.events]);
 
   return layers;
+};
+
+export const useCreateObject = () => {
+  const canvas = useCanvas();
+  const create = useCallback(
+    (
+      cb: (
+        opts: TPointerEventInfo<TPointerEvent> & { canvas: Canvas }
+      ) => FabricObject | IText
+    ) => {
+      canvas.defaultCursor = "crosshair";
+      canvas.once("mouse:down", (opts) => {
+        const obj = cb({
+          ...opts,
+          canvas,
+        });
+        canvas.defaultCursor = "default";
+        canvas.add(obj as any);
+        canvas.setActiveObject(obj as any);
+        canvas.requestRenderAll();
+      });
+    },
+    [canvas]
+  );
+  return create;
 };

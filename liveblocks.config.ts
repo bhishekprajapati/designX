@@ -1,6 +1,6 @@
 import type { JsonObject, LiveList, LiveObject } from "@liveblocks/client";
 
-export type LayerType = "Rect" | "Circle";
+export type LayerType = "Rect" | "Circle" | "IText";
 export type SelectLayerType<T extends LayerType> = T;
 
 interface IBaseLayerData extends JsonObject {
@@ -51,13 +51,39 @@ export interface ICircleLayerData extends IBaseLayerData {
   startAngle: 0;
 }
 
+export interface ITextLayerData extends IBaseLayerData {
+  fontSize: number;
+  fontWeight: string;
+  fontFamily: string;
+  fontStyle: string;
+  lineHeight: number;
+  text: string;
+  charSpacing: number;
+  textAlign: string;
+  styles: any[];
+  pathStartOffset: number;
+  pathSide: string;
+  pathAlign: string;
+  underline: boolean;
+  overline: boolean;
+  linethrough: boolean;
+  textBackgroundColor: string;
+  direction: string;
+  name: string;
+  type: SelectLayerType<"IText">;
+}
+
 // WARN: DO NOT FORGET KEEP BOTH THE WRITTEN BELOW TYPES IN SYNC
 export type TLiveRoomStorage = {
   fabricCanvas: LiveObject<{
     name: string;
     snapshot: string;
     background: string;
-    layers: LiveList<LiveObject<IRectLayerData> | LiveObject<ICircleLayerData>>;
+    layers: LiveList<
+      | LiveObject<IRectLayerData>
+      | LiveObject<ICircleLayerData>
+      | LiveObject<ITextLayerData>
+    >;
   }>;
 };
 

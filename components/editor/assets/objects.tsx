@@ -8,9 +8,16 @@ import {
   type TEvent,
   Rect,
   Circle,
+  IText,
 } from "fabric";
 import { FabricObject } from "fabric";
-import { Circle as IconCircle, Eye, EyeClosed, Square } from "lucide-react";
+import {
+  Circle as IconCircle,
+  Eye,
+  EyeClosed,
+  Square,
+  Type,
+} from "lucide-react";
 import { omit } from "remeda";
 
 import { Button, buttonVariants } from "@ui/button";
@@ -24,6 +31,7 @@ import { useSelected } from "@/hooks/use-fabric";
 import {
   ICircleLayerData,
   IRectLayerData,
+  ITextLayerData,
   LayerType,
 } from "@/liveblocks.config";
 import { cn } from "@/lib/utils";
@@ -123,6 +131,7 @@ const FabricObjectCard = (props: FabricObjectCardProps) => {
         <span>
           {type === "rect" && <Square className="scale-75" size={8} />}
           {type === "circle" && <IconCircle className="scale-75" size={8} />}
+          {type === "i-text" && <Type className="scale-75" size={8} />}
         </span>
         {allowEditing ? (
           <input
@@ -303,7 +312,10 @@ const SyncAddedOrRemovedObjects = () => {
     const liveMap = new Map(liveObjects.map((obj) => [obj.id, obj]));
 
     const addedObjectMap = (() => {
-      const map = new Map<string, IRectLayerData | ICircleLayerData>();
+      const map = new Map<
+        string,
+        IRectLayerData | ICircleLayerData | ITextLayerData
+      >();
       liveMap.forEach((value, key) => {
         if (localMap.has(key)) return;
         map.set(key, value);
@@ -333,6 +345,14 @@ const SyncAddedOrRemovedObjects = () => {
           circle.set(omit(state, ["type"]));
           circle.setCoords();
           canvas.add(circle);
+          break;
+
+        case "IText":
+          const itext = new IText(state.text);
+          itext.set(omit(state, ["type"]));
+          itext.setCoords();
+          // @ts-expect-error
+          canvas.add(itext);
           break;
       }
     });

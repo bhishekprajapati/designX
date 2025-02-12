@@ -20,9 +20,10 @@ import OpacityControl from "@editor/canvas/controls/opacity-control";
 import ZoomControl from "@editor/canvas/controls/zoom-control";
 
 import { useActivatedObject, useCanvas } from "@/hooks/use-fabric";
-import { isRect } from "@/lib/fabric";
+import { isCircle, isIText, isRect } from "@/lib/fabric";
 import CanvasSnapshot from "../canvas/snapshot";
 import { useEffect } from "react";
+import { Circle, IText, Rect } from "fabric";
 
 const ColabControls = () => {
   return (
@@ -60,9 +61,7 @@ const PageBackgroundControl = () => {
   return <ColorPicker color={background} onChange={handleColorChange} />;
 };
 
-const LayerControls = () => {
-  const obj = useActivatedObject();
-
+const RectangleObjectControls = ({ obj }: { obj: Rect }) => {
   return (
     <>
       <Block>
@@ -79,12 +78,10 @@ const LayerControls = () => {
             <BlockGroupLabel>Opacity</BlockGroupLabel>
             <OpacityControl />
           </BlockGroup>
-          {isRect(obj) && (
-            <BlockGroup className="ps-0">
-              <BlockGroupLabel>Corner radius</BlockGroupLabel>
-              <CornerRadiusControl />
-            </BlockGroup>
-          )}
+          <BlockGroup className="ps-0">
+            <BlockGroupLabel>Corner radius</BlockGroupLabel>
+            <CornerRadiusControl />
+          </BlockGroup>
         </div>
       </Block>
       <Block>
@@ -95,6 +92,76 @@ const LayerControls = () => {
       </Block>
     </>
   );
+};
+
+const CircleObjectControls = ({ obj }: { obj: Circle }) => {
+  return (
+    <>
+      <Block>
+        <BlockLabel>Layout</BlockLabel>
+        <BlockGroup>
+          <BlockGroupLabel>Dimensions</BlockGroupLabel>
+          <DimensionControl />
+        </BlockGroup>
+      </Block>
+      <Block>
+        <BlockLabel>Appearance</BlockLabel>
+        <div className="flex gap-2">
+          <BlockGroup className="pe-0">
+            <BlockGroupLabel>Opacity</BlockGroupLabel>
+            <OpacityControl />
+          </BlockGroup>
+        </div>
+      </Block>
+      <Block>
+        <BlockLabel>Fill</BlockLabel>
+        <BlockGroup className="pe-0">
+          <FillControl />
+        </BlockGroup>
+      </Block>
+    </>
+  );
+};
+
+const ITextObjectControls = ({ obj }: { obj: IText }) => {
+  return (
+    <>
+      <Block>
+        <BlockLabel>Layout</BlockLabel>
+        <BlockGroup>
+          <BlockGroupLabel>Dimensions</BlockGroupLabel>
+          <DimensionControl />
+        </BlockGroup>
+      </Block>
+      <Block>
+        <BlockLabel>Appearance</BlockLabel>
+        <div className="flex gap-2">
+          <BlockGroup className="pe-0">
+            <BlockGroupLabel>Opacity</BlockGroupLabel>
+            <OpacityControl />
+          </BlockGroup>
+          <BlockGroup className="ps-0">
+            <BlockGroupLabel>Corner radius</BlockGroupLabel>
+            <CornerRadiusControl />
+          </BlockGroup>
+        </div>
+      </Block>
+      <Block>
+        <BlockLabel>Fill</BlockLabel>
+        <BlockGroup className="pe-0">
+          <FillControl />
+        </BlockGroup>
+      </Block>
+    </>
+  );
+};
+
+const LayerControls = () => {
+  const obj = useActivatedObject();
+  if (isRect(obj)) return <RectangleObjectControls obj={obj} />;
+  if (isCircle(obj)) return <CircleObjectControls obj={obj} />;
+  if (isIText(obj)) return <ITextObjectControls obj={obj} />;
+  return <></>;
 };
 
 const ControlPanel = () => {
