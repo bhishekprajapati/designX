@@ -1,7 +1,7 @@
 "use client";
 
 import * as fabric from "fabric";
-import { Circle, Hand, MousePointer2, Square, Type } from "lucide-react";
+import { Circle, Hand, Info, MousePointer2, Square, Type } from "lucide-react";
 import { nanoid } from "nanoid";
 
 import { Button } from "@ui/button";

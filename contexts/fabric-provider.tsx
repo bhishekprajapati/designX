@@ -5,6 +5,8 @@ import { createContext, forwardRef, useState } from "react";
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import type { FabricCanvasHydrationState } from "@/liveblocks.config";
+import { useIsSmallScreen } from "@/hooks/screen";
+import { lockCanvas, unLockCanvas } from "@/lib/fabric";
 
 type FabricCanvasProps = React.HTMLProps<HTMLDivElement>;
 const FabricCanvas = forwardRef<HTMLCanvasElement, FabricCanvasProps>(
@@ -35,6 +37,7 @@ const FabricCanvasProvider = (props: FabricCanvasProviderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<TFabricCanvasContext>(null);
   const [ctx, setCtx] = useState<TFabricCanvasContext>(null);
+  const isSmallScreen = useIsSmallScreen();
 
   /**
    * Resposible for creating dataless instance
@@ -94,6 +97,14 @@ const FabricCanvasProvider = (props: FabricCanvasProviderProps) => {
       setCtx(null);
     };
   }, [fabricCanvas]);
+
+  useEffect(() => {
+    if (!fabricCanvas) return;
+    if (isSmallScreen) {
+      lockCanvas(fabricCanvas);
+      return () => unLockCanvas(fabricCanvas);
+    }
+  }, [fabricCanvas, isSmallScreen]);
 
   // I choose render function to make it easy
   // for direct components to render conditionally

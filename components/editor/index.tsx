@@ -18,6 +18,9 @@ import ToolBar from "@editor/tool-bar";
 import TopBar from "@editor/top-bar";
 import CanvasSnapshot from "./canvas/snapshot";
 import CanvasContextMenu from "./canvas/context-menu";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Info } from "lucide-react";
+import { WhenLargeScreen, WhenSmallScreen } from "../screens";
 
 type DesignEditorProps = {
   room: {
@@ -35,9 +38,11 @@ const DesignEditor = (props: DesignEditorProps) => {
         {({ ctx, fabricCanvas }) => (
           <ToolProvider>
             <EditorLayout renderTopBar={() => <TopBar />}>
-              <EditorLayout.AssestPanel>
-                {ctx && <AssetsPanel />}
-              </EditorLayout.AssestPanel>
+              <WhenLargeScreen>
+                <EditorLayout.AssestPanel>
+                  {ctx && <AssetsPanel />}
+                </EditorLayout.AssestPanel>
+              </WhenLargeScreen>
               <EditorLayout.Canvas>
                 <CanvasContextMenu>{fabricCanvas}</CanvasContextMenu>
                 {ctx && (
@@ -48,13 +53,29 @@ const DesignEditor = (props: DesignEditorProps) => {
                   </>
                 )}
                 <EditorLayout.Floating className="bottom-4 left-[50%] -translate-x-[50%]">
-                  {ctx && <ToolBar />}
+                  {ctx && (
+                    <>
+                      <WhenSmallScreen>
+                        <Alert>
+                          <Info className="h-4 w-4" />
+                          <AlertDescription>
+                            Open app on desktop to access editor
+                          </AlertDescription>
+                        </Alert>
+                      </WhenSmallScreen>
+                      <WhenLargeScreen>
+                        <ToolBar />
+                      </WhenLargeScreen>
+                    </>
+                  )}
                 </EditorLayout.Floating>
-                {ctx && <PresenceCursors />}
+                <WhenLargeScreen>{ctx && <PresenceCursors />}</WhenLargeScreen>
               </EditorLayout.Canvas>
-              <EditorLayout.ControlPanel>
-                {ctx && <ControlPanel />}
-              </EditorLayout.ControlPanel>
+              <WhenLargeScreen>
+                <EditorLayout.ControlPanel>
+                  {ctx && <ControlPanel />}
+                </EditorLayout.ControlPanel>
+              </WhenLargeScreen>
             </EditorLayout>
           </ToolProvider>
         )}
